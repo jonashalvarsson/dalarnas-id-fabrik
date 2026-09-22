@@ -22,6 +22,12 @@ function ForlagLayout() {
 
   return (
     <div className="min-h-screen bg-sand font-sans text-ink antialiased">
+      <a
+        href="#innehall"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-3 focus:text-primary-foreground"
+      >
+        Hoppa till innehållet
+      </a>
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-8 sm:py-8">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
           <Link to="/" className="flex items-center gap-3">
