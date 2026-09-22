@@ -11,14 +11,16 @@ type Suggestion = {
   status: string;
   author_name: string | null;
   created_at: string;
+  problem: string;
+  expected_benefit: string;
 };
 
 const CATEGORIES = [
-  "Patientvård",
+  "Administration",
+  "IT",
   "Arbetsmiljö",
-  "IT & system",
-  "Samarbete",
-  "Lokaler",
+  "Kommunikation",
+  "Ekonomi",
   "Övrigt",
 ] as const;
 
@@ -147,6 +149,18 @@ function Index() {
                     </span>
                   </div>
                   <p className="mt-2 text-sm text-pretty text-ink-soft">{s.description}</p>
+                  {s.problem && (
+                    <p className="mt-2 text-sm text-ink-soft">
+                      <span className="font-medium text-ink">Problem: </span>
+                      {s.problem}
+                    </p>
+                  )}
+                  {s.expected_benefit && (
+                    <p className="mt-1 text-sm text-ink-soft">
+                      <span className="font-medium text-ink">Förväntad nytta: </span>
+                      {s.expected_benefit}
+                    </p>
+                  )}
                   <div className="mt-4 flex items-center justify-between">
                     <span className="rounded-full bg-moss-pale px-2.5 py-1 text-xs font-medium text-moss">
                       {s.category}
@@ -173,6 +187,8 @@ function Index() {
 function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [problem, setProblem] = useState("");
+  const [expectedBenefit, setExpectedBenefit] = useState("");
   const [category, setCategory] = useState<string>(CATEGORIES[0]);
   const [name, setName] = useState("");
   const [anonymous, setAnonymous] = useState(false);
@@ -186,6 +202,8 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
     const nextErrors: Record<string, string> = {};
     const cleanTitle = title.trim();
     const cleanDescription = description.trim();
+    const cleanProblem = problem.trim();
+    const cleanBenefit = expectedBenefit.trim();
     const cleanName = anonymous ? "" : name.trim();
 
     if (cleanTitle.length < 5) {
@@ -197,6 +215,16 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
       nextErrors["description"] = "Beskriv förslaget med minst 10 tecken.";
     } else if (cleanDescription.length > 2000) {
       nextErrors["description"] = "Beskrivningen får vara högst 2 000 tecken.";
+    }
+    if (cleanProblem.length < 10) {
+      nextErrors["problem"] = "Beskriv vilket problem förslaget löser (minst 10 tecken).";
+    } else if (cleanProblem.length > 1000) {
+      nextErrors["problem"] = "Problembeskrivningen får vara högst 1 000 tecken.";
+    }
+    if (cleanBenefit.length < 10) {
+      nextErrors["expected_benefit"] = "Beskriv den förväntade nyttan (minst 10 tecken).";
+    } else if (cleanBenefit.length > 1000) {
+      nextErrors["expected_benefit"] = "Beskrivningen av nyttan får vara högst 1 000 tecken.";
     }
     if (cleanName.length > 80) {
       nextErrors["name"] = "Namnet får vara högst 80 tecken.";
@@ -213,6 +241,8 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
     const { error } = await supabase.from("suggestions").insert({
       title: cleanTitle,
       description: cleanDescription,
+      problem: cleanProblem,
+      expected_benefit: cleanBenefit,
       category,
       author_name: cleanName.length > 0 ? cleanName : null,
     });
@@ -231,6 +261,8 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
   function resetForm() {
     setTitle("");
     setDescription("");
+    setProblem("");
+    setExpectedBenefit("");
     setCategory(CATEGORIES[0]);
     setName("");
     setAnonymous(false);
@@ -302,6 +334,42 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
               />
               {errors["description"] && (
                 <p className="mt-1.5 text-xs text-rose">{errors["description"]}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="problem" className="block text-sm font-medium text-ink">
+                Vilket problem löser förslaget?
+              </label>
+              <textarea
+                id="problem"
+                rows={3}
+                value={problem}
+                onChange={(e) => setProblem(e.target.value)}
+                maxLength={1000}
+                placeholder="Beskriv det problem eller hinder som finns i dag"
+                className={`${inputClasses} resize-none`}
+              />
+              {errors["problem"] && (
+                <p className="mt-1.5 text-xs text-rose">{errors["problem"]}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="benefit" className="block text-sm font-medium text-ink">
+                Förväntad nytta
+              </label>
+              <textarea
+                id="benefit"
+                rows={3}
+                value={expectedBenefit}
+                onChange={(e) => setExpectedBenefit(e.target.value)}
+                maxLength={1000}
+                placeholder="Vad blir bättre om förslaget genomförs?"
+                className={`${inputClasses} resize-none`}
+              />
+              {errors["expected_benefit"] && (
+                <p className="mt-1.5 text-xs text-rose">{errors["expected_benefit"]}</p>
               )}
             </div>
 
