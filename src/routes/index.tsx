@@ -62,6 +62,7 @@ function Index() {
           </nav>
         </header>
 
+        <main id="innehall">
         <div className="mx-auto max-w-2xl pb-12">
           <SuggestionForm onSubmitted={() => queryClient.invalidateQueries({ queryKey: ["suggestions"] })} />
 
