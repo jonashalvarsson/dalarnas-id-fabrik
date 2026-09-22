@@ -189,17 +189,17 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
     const cleanName = anonymous ? "" : name.trim();
 
     if (cleanTitle.length < 5) {
-      nextErrors.title = "Ge förslaget en titel med minst 5 tecken.";
+      nextErrors["title"] = "Ge förslaget en titel med minst 5 tecken.";
     } else if (cleanTitle.length > 120) {
-      nextErrors.title = "Titeln får vara högst 120 tecken.";
+      nextErrors["title"] = "Titeln får vara högst 120 tecken.";
     }
     if (cleanDescription.length < 10) {
-      nextErrors.description = "Beskriv förslaget med minst 10 tecken.";
+      nextErrors["description"] = "Beskriv förslaget med minst 10 tecken.";
     } else if (cleanDescription.length > 2000) {
-      nextErrors.description = "Beskrivningen får vara högst 2 000 tecken.";
+      nextErrors["description"] = "Beskrivningen får vara högst 2 000 tecken.";
     }
     if (cleanName.length > 80) {
-      nextErrors.name = "Namnet får vara högst 80 tecken.";
+      nextErrors["name"] = "Namnet får vara högst 80 tecken.";
     }
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -284,7 +284,7 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
                 placeholder="Kort sammanfattning av ditt förslag"
                 className={inputClasses}
               />
-              {errors.title && <p className="mt-1.5 text-xs text-rose">{errors.title}</p>}
+              {errors["title"] && <p className="mt-1.5 text-xs text-rose">{errors["title"]}</p>}
             </div>
 
             <div>
@@ -300,8 +300,8 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
                 placeholder="Berätta mer om förslaget och hur det kan hjälpa"
                 className={`${inputClasses} resize-none`}
               />
-              {errors.description && (
-                <p className="mt-1.5 text-xs text-rose">{errors.description}</p>
+              {errors["description"] && (
+                <p className="mt-1.5 text-xs text-rose">{errors["description"]}</p>
               )}
             </div>
 
@@ -337,7 +337,7 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
                 placeholder={anonymous ? "Anonymt förslag" : "Ditt namn"}
                 className={`${inputClasses} disabled:cursor-not-allowed disabled:opacity-50`}
               />
-              {errors.name && <p className="mt-1.5 text-xs text-rose">{errors.name}</p>}
+              {errors["name"] && <p className="mt-1.5 text-xs text-rose">{errors["name"]}</p>}
               <label className="mt-2 flex cursor-pointer select-none items-center gap-2 text-sm text-ink-soft">
                 <input
                   type="checkbox"
