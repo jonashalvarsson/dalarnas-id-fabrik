@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES } from "@/lib/suggestions";
+import { CATEGORIES, STATUSES, formatDate, type Suggestion } from "@/lib/suggestions";
+import { useVotes } from "@/lib/votes";
+import { VoteButton } from "@/components/VoteButton";
 
 const inputClasses =
   "mt-2 w-full rounded-xl bg-sand/50 border border-black/10 px-4 py-3 text-sm text-ink placeholder:text-ink-soft/60 focus:outline-none focus:ring-2 focus:ring-moss/30 focus:border-moss/40";
