@@ -1,0 +1,128 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { STATUS_STYLES, formatDate, type Suggestion } from "@/lib/suggestions";
+
+export const Route = createFileRoute("/forlag/$id")({
+  head: () => ({
+    meta: [
+      { title: "Förslag – Förbättringsposten" },
+      {
+        name: "description",
+        content: "Läs hela förbättringsförslaget: beskrivning, problem och förväntad nytta.",
+      },
+      { property: "og:title", content: "Förslag – Förbättringsposten" },
+      {
+        property: "og:description",
+        content: "Läs hela förbättringsförslaget: beskrivning, problem och förväntad nytta.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: SuggestionDetail,
+  notFoundComponent: SuggestionNotFound,
+});
+
+function SuggestionDetail() {
+  const { id } = Route.useParams();
+
+  const { data: suggestion, isLoading } = useQuery({
+    queryKey: ["suggestion", id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("suggestions").select("*").eq("id", id).single();
+      if (error) throw error;
+      return data as Suggestion;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-sand font-sans text-ink antialiased">
+        <div className="mx-auto max-w-3xl px-5 py-10 sm:px-8">
+          <div className="h-8 w-40 animate-pulse rounded-full bg-white/70" />
+          <div className="mt-6 h-96 animate-pulse rounded-2xl bg-white/70 ring-1 ring-black/5" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!suggestion) return <SuggestionNotFound />;
+
+  return (
+    <div className="min-h-screen bg-sand font-sans text-ink antialiased">
+      <div className="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-10">
+        <Link
+          to="/forlag"
+          className="inline-flex items-center gap-1.5 text-sm text-ink-soft transition-colors hover:text-moss"
+        >
+          ← Alla förslag
+        </Link>
+
+        <article className="mt-5 rounded-2xl bg-white p-6 ring-1 ring-black/5 sm:p-9">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-moss-pale px-2.5 py-1 text-xs font-medium text-moss">
+              {suggestion.category}
+            </span>
+            <span
+              className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                STATUS_STYLES[suggestion.status] ?? STATUS_STYLES["Ny"]
+              }`}
+            >
+              {suggestion.status}
+            </span>
+          </div>
+
+          <h1 className="mt-4 font-serif text-2xl font-semibold leading-tight text-balance text-ink sm:text-3xl">
+            {suggestion.title}
+          </h1>
+          <p className="mt-2 text-sm text-ink-soft/80">
+            {suggestion.author_name ?? "Anonym"} · {formatDate(suggestion.created_at)}
+          </p>
+
+          <div className="mt-7 space-y-7">
+            <Section label="Beskrivning">{suggestion.description}</Section>
+            {suggestion.problem && (
+              <Section label="Vilket problem löser förslaget?">{suggestion.problem}</Section>
+            )}
+            {suggestion.expected_benefit && (
+              <Section label="Förväntad nytta">{suggestion.expected_benefit}</Section>
+            )}
+          </div>
+        </article>
+      </div>
+    </div>
+  );
+}
+
+function Section({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-moss">{label}</h2>
+      <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-pretty text-ink-soft sm:text-base">
+        {children}
+      </p>
+    </section>
+  );
+}
+
+function SuggestionNotFound() {
+  return (
+    <div className="min-h-screen bg-sand font-sans text-ink antialiased">
+      <div className="mx-auto max-w-3xl px-5 py-10 sm:px-8">
+        <Link
+          to="/forlag"
+          className="inline-flex items-center gap-1.5 text-sm text-ink-soft transition-colors hover:text-moss"
+        >
+          ← Alla förslag
+        </Link>
+        <div className="mt-6 rounded-2xl bg-white p-10 text-center ring-1 ring-dashed ring-moss/30">
+          <p className="font-serif text-lg font-medium text-moss">Förslaget hittades inte</p>
+          <p className="mt-2 text-sm text-ink-soft">
+            Det kan ha tagits bort. Gå tillbaka och välj ett annat förslag.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
