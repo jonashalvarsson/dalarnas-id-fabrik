@@ -67,8 +67,45 @@ function ForlagPage() {
           <p className="mt-1 text-sm text-ink-soft">Klicka på ett förslag för att läsa mer.</p>
         </div>
         <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-ink-soft ring-1 ring-black/5">
-          {suggestions ? `${suggestions.length} st` : "…"}
+          {filtered ? `${filtered.length} st` : "…"}
         </span>
+      </div>
+
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Sök bland förslag…"
+          aria-label="Sök bland förslag"
+          className="w-full rounded-xl bg-white px-4 py-2.5 text-sm text-ink ring-1 ring-black/10 placeholder:text-ink-soft/60 focus:outline-none focus:ring-2 focus:ring-moss sm:flex-1"
+        />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          aria-label="Filtrera på kategori"
+          className="rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-moss"
+        >
+          <option value="">Alla kategorier</option>
+          {CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          aria-label="Filtrera på status"
+          className="rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-moss"
+        >
+          <option value="">Alla statusar</option>
+          {STATUSES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="grid grid-cols-1 gap-4 pb-12 sm:grid-cols-2 lg:grid-cols-3">
@@ -90,7 +127,14 @@ function ForlagPage() {
           </div>
         )}
 
-        {suggestions?.map((s) => (
+        {!isLoading && suggestions && suggestions.length > 0 && filtered?.length === 0 && (
+          <div className="rounded-2xl bg-white p-8 text-center ring-1 ring-dashed ring-moss/30 sm:col-span-2 lg:col-span-3">
+            <p className="font-serif text-base font-medium text-moss">Inga träffar</p>
+            <p className="mt-1 text-sm text-ink-soft">Prova att ändra sökordet eller filtren.</p>
+          </div>
+        )}
+
+        {filtered?.map((s) => (
           <Link
             key={s.id}
             to="/forlag/$id"
