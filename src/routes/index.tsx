@@ -369,6 +369,51 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
   );
 }
 
+type FieldChildProps = {
+  id: string;
+  "aria-describedby": string;
+  "aria-invalid": true | undefined;
+  "aria-required": true;
+};
+
+function Field({
+  id,
+  label,
+  hint,
+  error,
+  children,
+}: {
+  id: string;
+  label: string;
+  hint: string;
+  error: string | undefined;
+  children: (props: FieldChildProps) => React.ReactNode;
+}) {
+  const hintId = `${id}-hint`;
+  const errorId = `${id}-error`;
+  return (
+    <div>
+      <label htmlFor={id} className="block text-base font-semibold text-ink">
+        {label}
+      </label>
+      <p id={hintId} className="mt-1 text-sm text-ink-soft">
+        {hint}
+      </p>
+      {children({
+        id,
+        "aria-describedby": error ? `${hintId} ${errorId}` : hintId,
+        "aria-invalid": error ? true : undefined,
+        "aria-required": true,
+      })}
+      {error && (
+        <p id={errorId} className="mt-2 text-sm font-semibold text-rose">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function StatsSection() {
   const { data: suggestions, isLoading } = useQuery({
     queryKey: ["suggestions"],
