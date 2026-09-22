@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { STATUS_STYLES, formatDate, type Suggestion } from "@/lib/suggestions";
+import { formatDate, type Suggestion } from "@/lib/suggestions";
+import { CategoryBadge, StatusBadge } from "@/components/StatusBadge";
 import { useVotes } from "@/lib/votes";
 import { VoteButton } from "@/components/VoteButton";
 

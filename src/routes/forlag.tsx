@@ -70,7 +70,9 @@ function ForlagLayout() {
           </nav>
         </header>
 
-        <Outlet />
+        <main id="innehall">
+          <Outlet />
+        </main>
 
         <footer className="flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-sm text-ink-soft sm:flex-row sm:items-center">
           <p>Region Dalarna · Intern förbättringstjänst</p>
