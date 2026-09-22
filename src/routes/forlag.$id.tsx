@@ -62,6 +62,12 @@ function SuggestionDetail() {
 
       <article className="mt-5 rounded-md border border-border border-l-4 border-l-primary bg-card p-6 sm:p-9">
         <div className="flex flex-wrap items-center gap-2">
+          {suggestion.is_prioritized && (
+            <span className="inline-flex items-center gap-1 rounded-md bg-amber-pale px-2.5 py-1 text-xs font-bold text-amber">
+              <Star aria-hidden="true" className="size-3.5" />
+              Prioriterat
+            </span>
+          )}
           <CategoryBadge category={suggestion.category} />
           <StatusBadge status={suggestion.status} />
         </div>
