@@ -247,6 +247,34 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
             className="mt-2 resize-y"
           />
         </div>
+        <div>
+          <label htmlFor={`responsible-${suggestion.id}`} className="text-sm font-semibold text-ink">
+            Ansvarig för nästa steg
+          </label>
+          <Input
+            id={`responsible-${suggestion.id}`}
+            value={responsible}
+            maxLength={120}
+            onChange={(e) => setResponsible(e.target.value)}
+            placeholder="Namn eller funktion"
+            className="mt-2"
+          />
+        </div>
+        <div className="flex items-start sm:items-end">
+          <label
+            htmlFor={`prio-${suggestion.id}`}
+            className="flex min-h-12 cursor-pointer items-center gap-3 text-sm font-semibold text-ink"
+          >
+            <input
+              id={`prio-${suggestion.id}`}
+              type="checkbox"
+              checked={prioritized}
+              onChange={(e) => setPrioritized(e.target.checked)}
+              className="size-5 rounded border-input accent-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+            Markera som prioriterat
+          </label>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
