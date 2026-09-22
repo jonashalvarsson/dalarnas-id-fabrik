@@ -73,6 +73,8 @@ function Index() {
           </Link>
         </div>
 
+        <StatsSection />
+
         <footer className="flex flex-col items-start justify-between gap-3 border-t border-black/5 pt-6 text-xs text-ink-soft/80 sm:flex-row sm:items-center">
           <p>Region Dalarna · Intern förbättringstjänst</p>
           <p>Frågor? Kontakta förbättringskoordinatören.</p>
