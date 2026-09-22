@@ -156,6 +156,8 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
         .update({
           status,
           admin_comment: comment,
+          is_prioritized: prioritized,
+          responsible_person: responsible,
           status_updated_at: new Date().toISOString(),
         })
         .eq("id", suggestion.id);
