@@ -134,11 +134,20 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
   const [status, setStatus] = useState(suggestion.status);
   const [comment, setComment] = useState(suggestion.admin_comment ?? "");
   const [saved, setSaved] = useState(false);
+  const [prioritized, setPrioritized] = useState(suggestion.is_prioritized ?? false);
+  const [responsible, setResponsible] = useState(suggestion.responsible_person ?? "");
 
   useEffect(() => {
     setStatus(suggestion.status);
     setComment(suggestion.admin_comment ?? "");
-  }, [suggestion.status, suggestion.admin_comment]);
+    setPrioritized(suggestion.is_prioritized ?? false);
+    setResponsible(suggestion.responsible_person ?? "");
+  }, [
+    suggestion.status,
+    suggestion.admin_comment,
+    suggestion.is_prioritized,
+    suggestion.responsible_person,
+  ]);
 
   const save = useMutation({
     mutationFn: async () => {
