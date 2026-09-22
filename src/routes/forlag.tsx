@@ -1,10 +1,24 @@
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/lib/useSession";
 
 export const Route = createFileRoute("/forlag")({
   component: ForlagLayout,
 });
 
 function ForlagLayout() {
+  const { user, loading } = useSession();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
+
   return (
     <div className="min-h-screen bg-sand font-sans text-ink antialiased">
       <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
@@ -25,9 +39,25 @@ function ForlagLayout() {
             <Link to="/" className="transition-colors hover:text-moss">
               Lämna förslag
             </Link>
-            <Link to="/administration" className="transition-colors hover:text-moss">
-              Administration
-            </Link>
+            {!loading && user ? (
+              <>
+                <Link to="/administration" className="transition-colors hover:text-moss">
+                  Administration
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="transition-colors hover:text-moss"
+                >
+                  Logga ut
+                </button>
+              </>
+            ) : (
+              <Link to="/auth" className="transition-colors hover:text-moss">
+                Logga in
+              </Link>
+            )}
+
           </nav>
         </header>
 
