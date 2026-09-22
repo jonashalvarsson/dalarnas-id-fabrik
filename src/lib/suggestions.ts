@@ -8,6 +8,8 @@ export type Suggestion = {
   created_at: string;
   problem: string;
   expected_benefit: string;
+  admin_comment: string;
+  status_updated_at: string | null;
 };
 
 export const CATEGORIES = [
