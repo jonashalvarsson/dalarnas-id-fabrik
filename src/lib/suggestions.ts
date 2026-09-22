@@ -19,10 +19,20 @@ export const CATEGORIES = [
   "Övrigt",
 ] as const;
 
+export const STATUSES = [
+  "Nytt",
+  "Under bedömning",
+  "Planerat",
+  "Genomfört",
+  "Avslutat",
+] as const;
+
 export const STATUS_STYLES: Record<string, string> = {
-  Ny: "bg-sand-dark text-ink-soft",
-  Pågår: "bg-rose-pale text-rose",
-  Klar: "bg-moss-pale text-moss",
+  Nytt: "bg-sand-dark text-ink-soft",
+  "Under bedömning": "bg-sky-pale text-sky",
+  Planerat: "bg-amber-pale text-amber",
+  "Genomfört": "bg-moss-pale text-moss",
+  Avslutat: "bg-ash-pale text-ash",
 };
 
 export function formatDate(iso: string) {

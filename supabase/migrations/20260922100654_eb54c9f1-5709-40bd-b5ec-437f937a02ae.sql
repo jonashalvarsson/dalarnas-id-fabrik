@@ -1,0 +1,1 @@
+ALTER TABLE public.suggestions ALTER COLUMN status SET DEFAULT 'Nytt';

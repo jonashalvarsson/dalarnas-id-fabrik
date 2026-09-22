@@ -63,7 +63,7 @@ function SuggestionDetail() {
           </span>
           <span
             className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-              STATUS_STYLES[suggestion.status] ?? STATUS_STYLES["Ny"]
+              STATUS_STYLES[suggestion.status] ?? STATUS_STYLES["Nytt"]
             }`}
           >
             {suggestion.status}
