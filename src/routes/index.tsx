@@ -485,31 +485,36 @@ function StatsSection() {
         )}
 
         {!isLoading && total > 0 && (
-          <ol className="mt-4 divide-y divide-black/5">
+          <ol className="mt-4 divide-y divide-border">
             {topFive.map((s, i) => (
-              <li key={s.id}>
-                <Link
-                  to="/forlag/$id"
-                  params={{ id: s.id }}
-                  className="group flex items-center gap-3 py-3 transition-colors"
+              <li key={s.id} className="flex items-center gap-3 py-3">
+                <span
+                  aria-hidden="true"
+                  className="grid size-8 shrink-0 place-items-center rounded-md bg-accent text-sm font-bold text-primary"
                 >
-                   <span className="grid size-8 shrink-0 place-items-center rounded-md bg-accent text-sm font-bold text-primary">
-                    {i + 1}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium text-ink group-hover:text-moss">
-                      {s.title}
+                  {i + 1}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <Link
+                    to="/forlag/$id"
+                    params={{ id: s.id }}
+                    className="block truncate text-base font-semibold text-ink underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {s.title}
+                  </Link>
+                  <span className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
+                    <StatusBadge status={s.status} />
+                    <span>
+                      {s.category} · {formatDate(s.created_at)}
                     </span>
-                    <span className="mt-0.5 block truncate text-xs text-ink-soft/80">
-                      {s.category} · {s.status} · {formatDate(s.created_at)}
-                    </span>
                   </span>
-                  <VoteButton
-                    suggestionId={s.id}
-                    count={votes?.counts[s.id] ?? 0}
-                    hasVoted={votes?.mine.has(s.id) ?? false}
-                  />
-                </Link>
+                </span>
+                <VoteButton
+                  suggestionId={s.id}
+                  count={votes?.counts[s.id] ?? 0}
+                  hasVoted={votes?.mine.has(s.id) ?? false}
+                  title={s.title}
+                />
               </li>
             ))}
           </ol>
