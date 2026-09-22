@@ -10,7 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ForlagRouteImport } from './routes/forlag'
+import { Route as AuthenticatedAdministrationRouteImport } from './routes/_authenticated/administration'
 import { Route as ForlagIndexRouteImport } from './routes/forlag.index'
 import { Route as ForlagIdRouteImport } from './routes/forlag.$id'
 
@@ -19,11 +22,26 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForlagRoute = ForlagRouteImport.update({
   id: '/forlag',
   path: '/forlag',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdministrationRoute =
+  AuthenticatedAdministrationRouteImport.update({
+    id: '/administration',
+    path: '/administration',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ForlagIndexRoute = ForlagIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,32 +55,50 @@ const ForlagIdRoute = ForlagIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/forlag': typeof ForlagRouteWithChildren
+  '/administration': typeof AuthenticatedAdministrationRoute
   '/forlag/$id': typeof ForlagIdRoute
   '/forlag/': typeof ForlagIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/administration': typeof AuthenticatedAdministrationRoute
   '/forlag/$id': typeof ForlagIdRoute
   '/forlag': typeof ForlagIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/forlag': typeof ForlagRouteWithChildren
+  '/_authenticated/administration': typeof AuthenticatedAdministrationRoute
   '/forlag/$id': typeof ForlagIdRoute
   '/forlag/': typeof ForlagIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/forlag' | '/forlag/$id' | '/forlag/'
+  fullPaths:
+    '/' | '/auth' | '/forlag' | '/administration' | '/forlag/$id' | '/forlag/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/forlag/$id' | '/forlag'
-  id: '__root__' | '/' | '/forlag' | '/forlag/$id' | '/forlag/'
+  to: '/' | '/auth' | '/administration' | '/forlag/$id' | '/forlag'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/forlag'
+    | '/_authenticated/administration'
+    | '/forlag/$id'
+    | '/forlag/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ForlagRoute: typeof ForlagRouteWithChildren
 }
 
@@ -75,12 +111,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forlag': {
       id: '/forlag'
       path: '/forlag'
       fullPath: '/forlag'
       preLoaderRoute: typeof ForlagRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/administration': {
+      id: '/_authenticated/administration'
+      path: '/administration'
+      fullPath: '/administration'
+      preLoaderRoute: typeof AuthenticatedAdministrationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/forlag/': {
       id: '/forlag/'
@@ -99,6 +156,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdministrationRoute: typeof AuthenticatedAdministrationRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdministrationRoute: AuthenticatedAdministrationRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 interface ForlagRouteChildren {
   ForlagIdRoute: typeof ForlagIdRoute
   ForlagIndexRoute: typeof ForlagIndexRoute
@@ -114,6 +182,8 @@ const ForlagRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   ForlagRoute: ForlagRouteWithChildren,
 }
 export const routeTree = rootRouteImport

@@ -101,6 +101,22 @@ function SuggestionDetail() {
             <Section label="Förväntad nytta">{suggestion.expected_benefit}</Section>
           )}
         </div>
+
+        {suggestion.admin_comment && (
+          <div className="mt-7 rounded-xl bg-moss-pale/60 p-5">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-moss">
+              Kommentar från ansvarig
+            </h2>
+            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft sm:text-base">
+              {suggestion.admin_comment}
+            </p>
+            {suggestion.status_updated_at && (
+              <p className="mt-3 text-xs text-ink-soft/80">
+                Uppdaterad {formatDate(suggestion.status_updated_at)}
+              </p>
+            )}
+          </div>
+        )}
       </article>
     </div>
   );

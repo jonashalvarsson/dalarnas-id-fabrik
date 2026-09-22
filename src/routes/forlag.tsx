@@ -25,6 +25,9 @@ function ForlagLayout() {
             <Link to="/" className="transition-colors hover:text-moss">
               Lämna förslag
             </Link>
+            <Link to="/administration" className="transition-colors hover:text-moss">
+              Administration
+            </Link>
           </nav>
         </header>
 
