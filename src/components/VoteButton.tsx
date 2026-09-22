@@ -1,4 +1,5 @@
 import { useToggleVote } from "@/lib/votes";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   suggestionId: string;
@@ -11,7 +12,9 @@ export function VoteButton({ suggestionId, count, hasVoted, size = "sm" }: Props
   const toggle = useToggleVote();
 
   return (
-    <button
+    <Button
+      variant={hasVoted ? "default" : "outline"}
+      size={size === "lg" ? "default" : "sm"}
       type="button"
       aria-label={hasVoted ? "Ta tillbaka din röst" : "Rösta på förslaget"}
       aria-pressed={hasVoted}
@@ -21,13 +24,7 @@ export function VoteButton({ suggestionId, count, hasVoted, size = "sm" }: Props
         e.stopPropagation();
         toggle.mutate({ suggestionId, hasVoted });
       }}
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full font-medium transition-colors disabled:opacity-60 ${
-        size === "lg" ? "px-4 py-2 text-sm" : "px-3 py-1.5 text-xs"
-      } ${
-        hasVoted
-          ? "bg-moss text-primary-foreground hover:bg-moss-light"
-          : "bg-moss-pale text-moss ring-1 ring-moss/20 hover:bg-moss/15"
-      }`}
+      className="shrink-0"
     >
       <span aria-hidden="true">▲</span>
       <span>{count}</span>
@@ -35,6 +32,6 @@ export function VoteButton({ suggestionId, count, hasVoted, size = "sm" }: Props
       <span className={size === "lg" ? "" : "hidden sm:inline"}>
         {hasVoted ? "Röstat" : "Rösta"}
       </span>
-    </button>
+    </Button>
   );
 }
