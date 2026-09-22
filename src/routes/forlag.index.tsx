@@ -1,29 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { STATUS_STYLES, formatDate, type Suggestion } from "@/lib/suggestions";
-
-export const Route = createFileRoute("/forlag/")({
-  head: () => ({
-    meta: [
-      { title: "Alla förslag – Förbättringsposten" },
-      {
-        name: "description",
-        content: "Se alla inskickade förbättringsförslag till Region Dalarna med kategori, datum och status.",
-      },
-      { property: "og:title", content: "Alla förslag – Förbättringsposten" },
-      {
-        property: "og:description",
-        content: "Se alla inskickade förbättringsförslag till Region Dalarna med kategori, datum och status.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: ForlagPage,
-});
-
-function ForlagPage() {
+import {
+  CATEGORIES,
+  STATUSES,
+  STATUS_STYLES,
+  formatDate,
+  type Suggestion,
+} from "@/lib/suggestions";
+...
+  });
   const { data: suggestions, isLoading } = useQuery({
     queryKey: ["suggestions"],
     queryFn: async () => {
@@ -35,6 +22,21 @@ function ForlagPage() {
       if (error) throw error;
       return data as Suggestion[];
     },
+  });
+
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("");
+  const [status, setStatus] = useState("");
+
+  const filtered = suggestions?.filter((s) => {
+    const q = query.trim().toLowerCase();
+    const matchesQuery =
+      q === "" ||
+      s.title.toLowerCase().includes(q) ||
+      s.description.toLowerCase().includes(q);
+    const matchesCategory = category === "" || s.category === category;
+    const matchesStatus = status === "" || s.status === status;
+    return matchesQuery && matchesCategory && matchesStatus;
   });
 
   return (
