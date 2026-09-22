@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureAdminRole } from "@/lib/admin.functions";
-import { STATUSES, STATUS_STYLES, formatDate, type Suggestion } from "@/lib/suggestions";
+import { STATUSES, formatDate, type Suggestion } from "@/lib/suggestions";
+import { CategoryBadge, StatusBadge } from "@/components/StatusBadge";
 import { useSession } from "@/lib/useSession";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -162,17 +163,9 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
   return (
     <article className="rounded-md border border-border border-l-4 border-l-primary bg-card p-5 sm:p-6">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full bg-moss-pale px-2.5 py-1 text-xs font-medium text-moss">
-          {suggestion.category}
-        </span>
-        <span
-          className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-            STATUS_STYLES[suggestion.status] ?? STATUS_STYLES["Nytt"]
-          }`}
-        >
-          {suggestion.status}
-        </span>
-        <span className="text-xs text-ink-soft/80">{formatDate(suggestion.created_at)}</span>
+        <CategoryBadge category={suggestion.category} />
+        <StatusBadge status={suggestion.status} />
+        <span className="text-xs text-ink-soft">{formatDate(suggestion.created_at)}</span>
       </div>
 
       <h2 className="mt-3 text-lg font-bold text-ink">
@@ -227,16 +220,13 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Button
-          onClick={() => save.mutate()}
-          disabled={!dirty || save.isPending}
-        >
+        <Button onClick={() => save.mutate()} disabled={!dirty || save.isPending}>
           {save.isPending ? "Sparar…" : "Spara ändringar"}
         </Button>
-        {saved && <span className="text-sm text-moss">Sparat</span>}
-        {save.isError && (
-          <span className="text-sm text-rose">Kunde inte spara. Försök igen.</span>
-        )}
+        <span aria-live="polite" className="text-sm font-semibold">
+          {saved && <span className="text-moss">Ändringarna är sparade</span>}
+          {save.isError && <span className="text-rose">Kunde inte spara. Försök igen.</span>}
+        </span>
       </div>
     </article>
   );
