@@ -5,6 +5,7 @@ import { formatDate, type Suggestion } from "@/lib/suggestions";
 import { CategoryBadge, StatusBadge } from "@/components/StatusBadge";
 import { useVotes } from "@/lib/votes";
 import { VoteButton } from "@/components/VoteButton";
+import { Star } from "lucide-react";
 
 export const Route = createFileRoute("/forlag/$id")({
   head: () => ({
