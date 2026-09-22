@@ -80,6 +80,18 @@ function SuggestionDetail() {
           {suggestion.author_name ?? "Anonym"} · {formatDate(suggestion.created_at)}
         </p>
 
+        <div className="mt-5 flex items-center gap-3">
+          <VoteButton
+            suggestionId={suggestion.id}
+            count={votes?.counts[suggestion.id] ?? 0}
+            hasVoted={votes?.mine.has(suggestion.id) ?? false}
+            size="lg"
+          />
+          <span className="text-sm text-ink-soft">
+            {(votes?.counts[suggestion.id] ?? 0) === 1 ? "1 person har" : `${votes?.counts[suggestion.id] ?? 0} personer har`} röstat på det här förslaget
+          </span>
+        </div>
+
         <div className="mt-7 space-y-7">
           <Section label="Beskrivning">{suggestion.description}</Section>
           {suggestion.problem && (
