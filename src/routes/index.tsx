@@ -5,9 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, STATUSES, formatDate, type Suggestion } from "@/lib/suggestions";
 import { useVotes } from "@/lib/votes";
 import { VoteButton } from "@/components/VoteButton";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
-const inputClasses =
-  "mt-2 w-full rounded-xl bg-sand/50 border border-black/10 px-4 py-3 text-sm text-ink placeholder:text-ink-soft/60 focus:outline-none focus:ring-2 focus:ring-moss/30 focus:border-moss/40";
+const inputClasses = "mt-2";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -36,19 +38,19 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-sand font-sans text-ink antialiased">
-      <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
-        <header className="flex items-center justify-between pb-8 sm:pb-10">
+      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-8 sm:py-8">
+        <header className="mb-8 flex items-center justify-between gap-4 border-b border-border pb-5">
           <div className="flex items-center gap-3">
-            <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-moss font-serif text-base font-semibold text-primary-foreground">
+            <div className="grid size-12 shrink-0 place-items-center rounded-md bg-primary text-base font-bold text-primary-foreground">
               R
             </div>
             <div className="leading-tight">
-              <p className="text-sm font-semibold text-ink">Region Dalarna</p>
-              <p className="text-xs text-ink-soft">Förbättringsposten</p>
+              <p className="text-base font-bold text-ink">Region Dalarna</p>
+              <p className="text-sm text-ink-soft">Förbättringsförslag</p>
             </div>
           </div>
-          <nav className="hidden items-center gap-7 text-sm text-ink-soft sm:flex">
-            <Link to="/forlag" className="transition-colors hover:text-moss">
+          <nav className="flex items-center text-sm text-ink-soft">
+            <Link to="/forlag" className="flex min-h-11 items-center px-3 font-semibold text-primary underline-offset-4 hover:underline">
               Alla förslag
             </Link>
           </nav>
@@ -59,15 +61,15 @@ function Index() {
 
           <Link
             to="/forlag"
-            className="group mt-6 flex items-center justify-between rounded-2xl bg-white p-5 ring-1 ring-black/5 transition-all hover:-translate-y-0.5 hover:ring-moss/30"
+            className="group mt-6 flex min-h-20 items-center justify-between rounded-md border border-border bg-card p-5 focus-visible:ring-2 focus-visible:ring-ring"
           >
             <div>
-              <p className="text-base font-medium text-ink group-hover:text-moss">Se alla förslag</p>
+              <p className="text-base font-semibold text-primary underline underline-offset-4">Se alla förslag</p>
               <p className="mt-1 text-sm text-ink-soft">
-                Bläddra bland alla inskickade förslag som kort – klicka för att läsa mer.
+                Läs, sök och rösta på inskickade förslag.
               </p>
             </div>
-            <span aria-hidden className="text-xl text-moss transition-transform group-hover:translate-x-1">
+            <span aria-hidden className="text-xl text-primary">
               →
             </span>
           </Link>
@@ -75,7 +77,7 @@ function Index() {
 
         <StatsSection />
 
-        <footer className="flex flex-col items-start justify-between gap-3 border-t border-black/5 pt-6 text-xs text-ink-soft/80 sm:flex-row sm:items-center">
+        <footer className="flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-sm text-ink-soft sm:flex-row sm:items-center">
           <p>Region Dalarna · Intern förbättringstjänst</p>
           <p>Frågor? Kontakta förbättringskoordinatören.</p>
         </footer>
@@ -172,42 +174,37 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
   }
 
   return (
-    <div className="rounded-2xl bg-white p-6 ring-1 ring-black/5 sm:p-8">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss">
-        Förbättringsförslag
-      </p>
+    <div className="rounded-md border border-border bg-card p-6 sm:p-8">
 
       {submitted ? (
         <div className="mt-6">
-          <div className="rounded-2xl bg-moss-pale/40 p-6 text-center ring-1 ring-dashed ring-moss/30">
-            <p className="font-serif text-lg font-medium text-moss">Tack för ditt förslag!</p>
+          <div className="rounded-md border-l-4 border-primary bg-accent p-6 text-center">
+            <p className="text-lg font-bold text-primary">Tack för ditt förslag!</p>
             <p className="mt-2 text-sm text-ink-soft">
               Det har registrerats och visas nu bland alla förslag.
             </p>
           </div>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <Link
-              to="/forlag"
-              className="flex-1 rounded-xl bg-moss py-3 text-center text-sm font-medium text-primary-foreground ring-1 ring-moss/60 transition-colors hover:bg-moss-light focus:outline-none focus:ring-2 focus:ring-moss/50"
-            >
-              Visa alla förslag
-            </Link>
-            <button
+            <Button asChild className="flex-1">
+              <Link to="/forlag">Visa alla förslag</Link>
+            </Button>
+            <Button
               type="button"
+              variant="outline"
               onClick={resetForm}
-              className="flex-1 rounded-xl border border-moss/30 bg-transparent py-3 text-sm font-medium text-moss transition-colors hover:bg-moss-pale/50 focus:outline-none focus:ring-2 focus:ring-moss/40"
+              className="flex-1"
             >
               Lämna ett till förslag
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
         <>
-          <h1 className="mt-3 max-w-[24ch] font-serif text-3xl font-semibold leading-tight text-balance text-ink sm:text-[2.25rem]">
-            Lämna förbättringsförslag
+          <h1 className="max-w-[24ch] text-3xl font-bold leading-tight text-balance text-ink">
+            Lämna ett förbättringsförslag
           </h1>
           <p className="mt-3 max-w-[46ch] text-sm text-pretty text-ink-soft sm:text-base">
-            Dina idéer gör vår vardag bättre. Vi läser varje förslag och återkommer till dig.
+             Beskriv din idé och vilken nytta den kan göra. Du behöver inget konto.
           </p>
 
           <form className="mt-7 space-y-5" onSubmit={handleSubmit} noValidate>
@@ -215,7 +212,7 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
               <label htmlFor="title" className="block text-sm font-medium text-ink">
                 Titel
               </label>
-              <input
+               <Input
                 id="title"
                 type="text"
                 value={title}
@@ -231,14 +228,14 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
               <label htmlFor="desc" className="block text-sm font-medium text-ink">
                 Beskrivning
               </label>
-              <textarea
+               <Textarea
                 id="desc"
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 maxLength={2000}
                 placeholder="Berätta mer om förslaget och hur det kan hjälpa"
-                className={`${inputClasses} resize-none`}
+                 className={inputClasses}
               />
               {errors["description"] && (
                 <p className="mt-1.5 text-xs text-rose">{errors["description"]}</p>
@@ -249,14 +246,14 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
               <label htmlFor="problem" className="block text-sm font-medium text-ink">
                 Vilket problem löser förslaget?
               </label>
-              <textarea
+               <Textarea
                 id="problem"
                 rows={3}
                 value={problem}
                 onChange={(e) => setProblem(e.target.value)}
                 maxLength={1000}
                 placeholder="Beskriv det problem eller hinder som finns i dag"
-                className={`${inputClasses} resize-none`}
+                 className={inputClasses}
               />
               {errors["problem"] && (
                 <p className="mt-1.5 text-xs text-rose">{errors["problem"]}</p>
@@ -267,14 +264,14 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
               <label htmlFor="benefit" className="block text-sm font-medium text-ink">
                 Förväntad nytta
               </label>
-              <textarea
+               <Textarea
                 id="benefit"
                 rows={3}
                 value={expectedBenefit}
                 onChange={(e) => setExpectedBenefit(e.target.value)}
                 maxLength={1000}
                 placeholder="Vad blir bättre om förslaget genomförs?"
-                className={`${inputClasses} resize-none`}
+                 className={inputClasses}
               />
               {errors["expected_benefit"] && (
                 <p className="mt-1.5 text-xs text-rose">{errors["expected_benefit"]}</p>
@@ -303,7 +300,7 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
               <label htmlFor="name" className="block text-sm font-medium text-ink">
                 Namn <span className="font-normal text-ink-soft">(valfritt)</span>
               </label>
-              <input
+               <Input
                 id="name"
                 type="text"
                 value={name}
@@ -314,24 +311,24 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
                 className={`${inputClasses} disabled:cursor-not-allowed disabled:opacity-50`}
               />
               {errors["name"] && <p className="mt-1.5 text-xs text-rose">{errors["name"]}</p>}
-              <label className="mt-2 flex cursor-pointer select-none items-center gap-2 text-sm text-ink-soft">
+              <label className="mt-3 flex min-h-11 cursor-pointer select-none items-center gap-3 text-base text-ink-soft">
                 <input
                   type="checkbox"
                   checked={anonymous}
                   onChange={(e) => setAnonymous(e.target.checked)}
-                  className="size-4 rounded-sm border-black/15 accent-moss"
+                  className="size-5 rounded-sm accent-primary"
                 />
                 Ange mig som anonym
               </label>
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-xl bg-moss py-3.5 text-sm font-medium text-primary-foreground ring-1 ring-moss/60 transition-colors hover:bg-moss-light focus:outline-none focus:ring-2 focus:ring-moss/50 disabled:opacity-60"
+              className="w-full"
             >
               {submitting ? "Skickar…" : "Skicka förslag"}
-            </button>
+            </Button>
 
             {submitError && (
               <p className="rounded-xl bg-rose-pale px-4 py-3 text-center text-xs text-rose">
@@ -339,8 +336,8 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
               </p>
             )}
 
-            <p className="text-center text-xs text-ink-soft/80">
-              Inget konto krävs. Dina uppgifter hanteras konfidentiellt.
+            <p className="text-center text-sm text-ink-soft">
+              Inget konto krävs. Du kan välja att vara anonym.
             </p>
           </form>
         </>
@@ -385,8 +382,8 @@ function StatsSection() {
     <section aria-label="Statistik" className="pb-12">
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
         {cards.map((c) => (
-          <div key={c.label} className="rounded-2xl bg-white p-4 text-center ring-1 ring-black/5 sm:p-6">
-            <p className="font-serif text-2xl font-semibold text-moss sm:text-3xl">
+          <div key={c.label} className="rounded-md border border-border bg-card p-4 text-center sm:p-6">
+            <p className="text-2xl font-bold text-primary sm:text-3xl">
               {isLoading ? "…" : c.value}
             </p>
             <p className="mt-1 text-xs text-ink-soft sm:text-sm">{c.label}</p>
@@ -394,9 +391,9 @@ function StatsSection() {
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl bg-white p-5 ring-1 ring-black/5 sm:p-7">
+      <div className="mt-6 rounded-md border border-border bg-card p-5 sm:p-7">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="font-serif text-lg font-semibold text-ink sm:text-xl">Mest röstade förslagen</h2>
+          <h2 className="text-xl font-bold text-ink">Mest röstade förslagen</h2>
           <Link
             to="/forlag"
             className="shrink-0 text-sm font-medium text-moss transition-colors hover:text-moss-light"
@@ -428,7 +425,7 @@ function StatsSection() {
                   params={{ id: s.id }}
                   className="group flex items-center gap-3 py-3 transition-colors"
                 >
-                  <span className="grid size-7 shrink-0 place-items-center rounded-full bg-moss-pale font-serif text-xs font-semibold text-moss">
+                   <span className="grid size-8 shrink-0 place-items-center rounded-md bg-accent text-sm font-bold text-primary">
                     {i + 1}
                   </span>
                   <span className="min-w-0 flex-1">
