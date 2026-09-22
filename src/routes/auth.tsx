@@ -74,7 +74,7 @@ function AuthPage() {
           </div>
         </Link>
 
-        <div className="mt-8 rounded-md border border-border bg-card p-6 sm:p-8">
+        <main className="mt-8 rounded-md border border-border bg-card p-6 sm:p-8">
           <h1 className="text-2xl font-bold text-ink">
             {mode === "login" ? "Logga in som ansvarig" : "Skapa konto som ansvarig"}
           </h1>
@@ -85,13 +85,16 @@ function AuthPage() {
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label htmlFor="email" className="text-sm font-medium text-ink">
+              <label htmlFor="email" className="block text-base font-semibold text-ink">
                 E-postadress
               </label>
               <Input
                 id="email"
                 type="email"
                 required
+                autoComplete="email"
+                aria-required="true"
+                aria-invalid={error ? true : undefined}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-2"
@@ -99,27 +102,39 @@ function AuthPage() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="text-sm font-medium text-ink">
+              <label htmlFor="password" className="block text-base font-semibold text-ink">
                 Lösenord
               </label>
+              <p id="password-hint" className="mt-1 text-sm text-ink-soft">
+                Minst 6 tecken.
+              </p>
               <Input
                 id="password"
                 type="password"
                 required
                 minLength={6}
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                aria-required="true"
+                aria-describedby="password-hint"
+                aria-invalid={error ? true : undefined}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="mt-2"
-                placeholder="Minst 6 tecken"
               />
             </div>
 
-            {error && (
-              <p className="rounded-xl bg-rose-pale px-3.5 py-2.5 text-sm text-rose">{error}</p>
-            )}
-            {info && (
-              <p className="rounded-xl bg-moss-pale px-3.5 py-2.5 text-sm text-moss">{info}</p>
-            )}
+            <div aria-live="assertive">
+              {error && (
+                <p className="rounded-md border-l-4 border-rose bg-rose-pale px-4 py-3 text-sm font-semibold text-rose">
+                  {error}
+                </p>
+              )}
+              {info && (
+                <p className="rounded-md border-l-4 border-moss bg-moss-pale px-4 py-3 text-sm font-semibold text-moss">
+                  {info}
+                </p>
+              )}
+            </div>
 
             <Button
               type="submit"
@@ -142,9 +157,9 @@ function AuthPage() {
           >
             {mode === "login" ? "Jag har inget konto än" : "Jag har redan ett konto"}
           </Button>
-        </div>
+        </main>
 
-        <Link to="/" className="mt-6 text-sm text-ink-soft transition-colors hover:text-moss">
+        <Link to="/" className="mt-6 flex min-h-11 items-center text-sm text-ink-soft hover:text-primary">
           ← Till startsidan
         </Link>
       </div>

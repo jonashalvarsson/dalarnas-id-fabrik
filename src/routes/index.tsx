@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, STATUSES, formatDate, type Suggestion } from "@/lib/suggestions";
 import { useVotes } from "@/lib/votes";
 import { VoteButton } from "@/components/VoteButton";
+import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,6 +39,12 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-sand font-sans text-ink antialiased">
+      <a
+        href="#innehall"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-3 focus:text-primary-foreground"
+      >
+        Hoppa till innehållet
+      </a>
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-8 sm:py-8">
         <header className="mb-8 flex items-center justify-between gap-4 border-b border-border pb-5">
           <div className="flex items-center gap-3">
@@ -56,6 +63,7 @@ function Index() {
           </nav>
         </header>
 
+        <main id="innehall">
         <div className="mx-auto max-w-2xl pb-12">
           <SuggestionForm onSubmitted={() => queryClient.invalidateQueries({ queryKey: ["suggestions"] })} />
 
@@ -76,6 +84,7 @@ function Index() {
         </div>
 
         <StatsSection />
+        </main>
 
         <footer className="flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-sm text-ink-soft sm:flex-row sm:items-center">
           <p>Region Dalarna · Intern förbättringstjänst</p>
@@ -208,85 +217,91 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
           </p>
 
           <form className="mt-7 space-y-5" onSubmit={handleSubmit} noValidate>
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-ink">
-                Titel
-              </label>
-               <Input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                maxLength={120}
-                placeholder="Kort sammanfattning av ditt förslag"
-                className={inputClasses}
-              />
-              {errors["title"] && <p className="mt-1.5 text-xs text-rose">{errors["title"]}</p>}
-            </div>
+            <p className="text-sm text-ink-soft">
+              Alla fält utom namn måste fyllas i.
+            </p>
 
-            <div>
-              <label htmlFor="desc" className="block text-sm font-medium text-ink">
-                Beskrivning
-              </label>
-               <Textarea
-                id="desc"
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                maxLength={2000}
-                placeholder="Berätta mer om förslaget och hur det kan hjälpa"
-                 className={inputClasses}
-              />
-              {errors["description"] && (
-                <p className="mt-1.5 text-xs text-rose">{errors["description"]}</p>
+            <Field
+              id="title"
+              label="Titel"
+              hint="Kort sammanfattning av ditt förslag."
+              error={errors["title"]}
+            >
+              {(props) => (
+                <Input
+                  {...props}
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  maxLength={120}
+                  className={inputClasses}
+                />
               )}
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="problem" className="block text-sm font-medium text-ink">
-                Vilket problem löser förslaget?
-              </label>
-               <Textarea
-                id="problem"
-                rows={3}
-                value={problem}
-                onChange={(e) => setProblem(e.target.value)}
-                maxLength={1000}
-                placeholder="Beskriv det problem eller hinder som finns i dag"
-                 className={inputClasses}
-              />
-              {errors["problem"] && (
-                <p className="mt-1.5 text-xs text-rose">{errors["problem"]}</p>
+            <Field
+              id="desc"
+              label="Beskrivning"
+              hint="Berätta mer om förslaget och hur det kan hjälpa."
+              error={errors["description"]}
+            >
+              {(props) => (
+                <Textarea
+                  {...props}
+                  rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  maxLength={2000}
+                  className={inputClasses}
+                />
               )}
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="benefit" className="block text-sm font-medium text-ink">
-                Förväntad nytta
-              </label>
-               <Textarea
-                id="benefit"
-                rows={3}
-                value={expectedBenefit}
-                onChange={(e) => setExpectedBenefit(e.target.value)}
-                maxLength={1000}
-                placeholder="Vad blir bättre om förslaget genomförs?"
-                 className={inputClasses}
-              />
-              {errors["expected_benefit"] && (
-                <p className="mt-1.5 text-xs text-rose">{errors["expected_benefit"]}</p>
+            <Field
+              id="problem"
+              label="Vilket problem löser förslaget?"
+              hint="Beskriv det problem eller hinder som finns i dag."
+              error={errors["problem"]}
+            >
+              {(props) => (
+                <Textarea
+                  {...props}
+                  rows={3}
+                  value={problem}
+                  onChange={(e) => setProblem(e.target.value)}
+                  maxLength={1000}
+                  className={inputClasses}
+                />
               )}
-            </div>
+            </Field>
+
+            <Field
+              id="benefit"
+              label="Förväntad nytta"
+              hint="Vad blir bättre om förslaget genomförs?"
+              error={errors["expected_benefit"]}
+            >
+              {(props) => (
+                <Textarea
+                  {...props}
+                  rows={3}
+                  value={expectedBenefit}
+                  onChange={(e) => setExpectedBenefit(e.target.value)}
+                  maxLength={1000}
+                  className={inputClasses}
+                />
+              )}
+            </Field>
 
             <div>
-              <label htmlFor="cat" className="block text-sm font-medium text-ink">
-                Kategori
+              <label htmlFor="cat" className="block text-base font-semibold text-ink">
+                Verksamhetsområde
               </label>
               <select
                 id="cat"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className={inputClasses}
+                className="mt-2 min-h-12 w-full rounded-md border border-input bg-card px-4 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c} value={c}>
@@ -297,50 +312,104 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
             </div>
 
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-ink">
+              <label htmlFor="name" className="block text-base font-semibold text-ink">
                 Namn <span className="font-normal text-ink-soft">(valfritt)</span>
               </label>
-               <Input
+              <Input
                 id="name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={80}
                 disabled={anonymous}
+                aria-invalid={errors["name"] ? true : undefined}
+                aria-describedby={errors["name"] ? "name-error" : undefined}
                 placeholder={anonymous ? "Anonymt förslag" : "Ditt namn"}
-                className={`${inputClasses} disabled:cursor-not-allowed disabled:opacity-50`}
+                className={`${inputClasses} disabled:cursor-not-allowed disabled:opacity-60`}
               />
-              {errors["name"] && <p className="mt-1.5 text-xs text-rose">{errors["name"]}</p>}
-              <label className="mt-3 flex min-h-11 cursor-pointer select-none items-center gap-3 text-base text-ink-soft">
+              {errors["name"] && (
+                <p id="name-error" className="mt-2 text-sm font-semibold text-rose">
+                  {errors["name"]}
+                </p>
+              )}
+              <label className="mt-3 flex min-h-11 cursor-pointer select-none items-center gap-3 text-base text-ink">
                 <input
                   type="checkbox"
                   checked={anonymous}
                   onChange={(e) => setAnonymous(e.target.checked)}
-                  className="size-5 rounded-sm accent-primary"
+                  className="size-5 rounded-sm accent-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
                 Ange mig som anonym
               </label>
             </div>
 
-            <Button
-              type="submit"
-              disabled={submitting}
-              className="w-full"
-            >
+            <Button type="submit" disabled={submitting} className="w-full">
               {submitting ? "Skickar…" : "Skicka förslag"}
             </Button>
 
-            {submitError && (
-              <p className="rounded-xl bg-rose-pale px-4 py-3 text-center text-xs text-rose">
-                {submitError}
-              </p>
-            )}
+            <div aria-live="assertive">
+              {Object.keys(errors).length > 0 && (
+                <p className="rounded-md border-l-4 border-rose bg-rose-pale px-4 py-3 text-sm font-semibold text-rose">
+                  Formuläret kunde inte skickas. Se meddelandena vid fälten ovan.
+                </p>
+              )}
+              {submitError && (
+                <p className="rounded-md border-l-4 border-rose bg-rose-pale px-4 py-3 text-sm font-semibold text-rose">
+                  {submitError}
+                </p>
+              )}
+            </div>
 
             <p className="text-center text-sm text-ink-soft">
               Inget konto krävs. Du kan välja att vara anonym.
             </p>
           </form>
         </>
+      )}
+    </div>
+  );
+}
+
+type FieldChildProps = {
+  id: string;
+  "aria-describedby": string;
+  "aria-invalid": true | undefined;
+  "aria-required": true;
+};
+
+function Field({
+  id,
+  label,
+  hint,
+  error,
+  children,
+}: {
+  id: string;
+  label: string;
+  hint: string;
+  error: string | undefined;
+  children: (props: FieldChildProps) => React.ReactNode;
+}) {
+  const hintId = `${id}-hint`;
+  const errorId = `${id}-error`;
+  return (
+    <div>
+      <label htmlFor={id} className="block text-base font-semibold text-ink">
+        {label}
+      </label>
+      <p id={hintId} className="mt-1 text-sm text-ink-soft">
+        {hint}
+      </p>
+      {children({
+        id,
+        "aria-describedby": error ? `${hintId} ${errorId}` : hintId,
+        "aria-invalid": error ? true : undefined,
+        "aria-required": true,
+      })}
+      {error && (
+        <p id={errorId} className="mt-2 text-sm font-semibold text-rose">
+          {error}
+        </p>
       )}
     </div>
   );
@@ -417,31 +486,36 @@ function StatsSection() {
         )}
 
         {!isLoading && total > 0 && (
-          <ol className="mt-4 divide-y divide-black/5">
+          <ol className="mt-4 divide-y divide-border">
             {topFive.map((s, i) => (
-              <li key={s.id}>
-                <Link
-                  to="/forlag/$id"
-                  params={{ id: s.id }}
-                  className="group flex items-center gap-3 py-3 transition-colors"
+              <li key={s.id} className="flex items-center gap-3 py-3">
+                <span
+                  aria-hidden="true"
+                  className="grid size-8 shrink-0 place-items-center rounded-md bg-accent text-sm font-bold text-primary"
                 >
-                   <span className="grid size-8 shrink-0 place-items-center rounded-md bg-accent text-sm font-bold text-primary">
-                    {i + 1}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium text-ink group-hover:text-moss">
-                      {s.title}
+                  {i + 1}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <Link
+                    to="/forlag/$id"
+                    params={{ id: s.id }}
+                    className="block truncate text-base font-semibold text-ink underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {s.title}
+                  </Link>
+                  <span className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
+                    <StatusBadge status={s.status} />
+                    <span>
+                      {s.category} · {formatDate(s.created_at)}
                     </span>
-                    <span className="mt-0.5 block truncate text-xs text-ink-soft/80">
-                      {s.category} · {s.status} · {formatDate(s.created_at)}
-                    </span>
                   </span>
-                  <VoteButton
-                    suggestionId={s.id}
-                    count={votes?.counts[s.id] ?? 0}
-                    hasVoted={votes?.mine.has(s.id) ?? false}
-                  />
-                </Link>
+                </span>
+                <VoteButton
+                  suggestionId={s.id}
+                  count={votes?.counts[s.id] ?? 0}
+                  hasVoted={votes?.mine.has(s.id) ?? false}
+                  title={s.title}
+                />
               </li>
             ))}
           </ol>
