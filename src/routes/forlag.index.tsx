@@ -70,80 +70,77 @@ function ForlagPage() {
       sort === "votes" ? (votes?.counts[b.id] ?? 0) - (votes?.counts[a.id] ?? 0) : 0,
     );
 
+  const selectClasses =
+    "mt-2 min-h-12 w-full rounded-md border border-input bg-card px-4 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ring";
+
   return (
     <>
-      <div className="flex items-end justify-between gap-4 pb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-ink">Alla förslag</h1>
-          <p className="mt-2 text-base text-ink-soft">Här kan du läsa och rösta på medarbetarnas förslag.</p>
-        </div>
-        <span className="text-sm font-semibold text-ink-soft">
-          {filtered ? `${filtered.length} st` : "…"}
-        </span>
+      <div className="pb-6">
+        <h1 className="text-3xl font-bold text-ink">Alla förslag</h1>
+        <p className="mt-2 text-base text-ink-soft">Här kan du läsa och rösta på medarbetarnas förslag.</p>
       </div>
 
       <div className="mb-8 grid gap-4 border-y border-border py-5 sm:grid-cols-2 lg:grid-cols-4">
         <div className="sm:col-span-2 lg:col-span-1">
-        <Label htmlFor="suggestion-search">Sök förslag</Label>
-        <Input
-          id="suggestion-search"
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Sök bland förslag…"
-          aria-label="Sök bland förslag"
-          className="mt-2"
-        />
+          <Label htmlFor="suggestion-search">Sök förslag</Label>
+          <Input
+            id="suggestion-search"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Sök bland förslag…"
+            className="mt-2"
+          />
         </div>
         <div>
-        <Label htmlFor="category-filter">Kategori</Label>
-        <select
-          id="category-filter"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          aria-label="Filtrera på kategori"
-          className="mt-2 min-h-12 w-full rounded-md border border-input bg-card px-4 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          <option value="">Alla kategorier</option>
-          {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+          <Label htmlFor="category-filter">Verksamhetsområde</Label>
+          <select
+            id="category-filter"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className={selectClasses}
+          >
+            <option value="">Alla områden</option>
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
-        <Label htmlFor="status-filter">Status</Label>
-        <select
-          id="status-filter"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          aria-label="Filtrera på status"
-          className="mt-2 min-h-12 w-full rounded-md border border-input bg-card px-4 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          <option value="">Alla statusar</option>
-          {STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+          <Label htmlFor="status-filter">Status</Label>
+          <select
+            id="status-filter"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className={selectClasses}
+          >
+            <option value="">Alla statusar</option>
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
-        <Label htmlFor="sort-filter">Sortering</Label>
-        <select
-          id="sort-filter"
-          value={sort}
-          onChange={(e) => setSort(e.target.value as "votes" | "date")}
-          aria-label="Sortera förslag"
-          className="mt-2 min-h-12 w-full rounded-md border border-input bg-card px-4 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          <option value="votes">Flest röster</option>
-          <option value="date">Senaste först</option>
-        </select>
+          <Label htmlFor="sort-filter">Sortering</Label>
+          <select
+            id="sort-filter"
+            value={sort}
+            onChange={(e) => setSort(e.target.value as "votes" | "date")}
+            className={selectClasses}
+          >
+            <option value="votes">Flest röster</option>
+            <option value="date">Senaste först</option>
+          </select>
         </div>
       </div>
 
+      <p aria-live="polite" className="mb-4 text-sm font-semibold text-ink-soft">
+        {filtered ? `${filtered.length} förslag visas` : "Hämtar förslag…"}
+      </p>
 
       <div className="space-y-4 pb-12">
         {isLoading &&
@@ -152,12 +149,12 @@ function ForlagPage() {
           ))}
 
         {!isLoading && suggestions?.length === 0 && (
-          <div className="rounded-2xl bg-white p-8 text-center ring-1 ring-dashed ring-moss/30 sm:col-span-2 lg:col-span-3">
-            <p className="font-serif text-base font-medium text-moss">Inga förslag ännu</p>
+          <div className="rounded-md border border-dashed border-border bg-card p-8 text-center">
+            <p className="text-base font-semibold text-ink">Inga förslag ännu</p>
             <p className="mt-1 text-sm text-ink-soft">Bli den första att lämna ett förslag.</p>
             <Link
               to="/"
-              className="mt-4 inline-block rounded-xl bg-moss px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-moss-light"
+              className="mt-4 inline-flex min-h-12 items-center rounded-md bg-primary px-5 text-base font-semibold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               Lämna ett förslag
             </Link>
@@ -165,47 +162,48 @@ function ForlagPage() {
         )}
 
         {!isLoading && suggestions && suggestions.length > 0 && filtered?.length === 0 && (
-          <div className="rounded-2xl bg-white p-8 text-center ring-1 ring-dashed ring-moss/30 sm:col-span-2 lg:col-span-3">
-            <p className="font-serif text-base font-medium text-moss">Inga träffar</p>
+          <div className="rounded-md border border-dashed border-border bg-card p-8 text-center">
+            <p className="text-base font-semibold text-ink">Inga träffar</p>
             <p className="mt-1 text-sm text-ink-soft">Prova att ändra sökordet eller filtren.</p>
           </div>
         )}
 
-        {filtered?.map((s) => (
-          <Link
-            key={s.id}
-            to="/forlag/$id"
-            params={{ id: s.id }}
-            className="group block rounded-md border border-border border-l-4 border-l-primary bg-card p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-6"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <span className="rounded-full bg-moss-pale px-2.5 py-1 text-xs font-medium text-moss">
-                {s.category}
-              </span>
-              <span
-                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
-                  STATUS_STYLES[s.status] ?? STATUS_STYLES["Nytt"]
-                }`}
+        {filtered && filtered.length > 0 && (
+          <ul className="space-y-4">
+            {filtered.map((s) => (
+              <li
+                key={s.id}
+                className="rounded-md border border-border border-l-4 border-l-primary bg-card p-5 sm:p-6"
               >
-                {s.status}
-              </span>
-            </div>
-            <h2 className="mt-3 text-lg font-semibold leading-snug text-ink group-hover:text-primary">
-              {s.title}
-            </h2>
-            <p className="mt-2 line-clamp-2 text-base leading-relaxed text-ink-soft">{s.description}</p>
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4 text-sm text-ink-soft">
-              <span className="truncate">
-                {s.author_name ?? "Anonym"} · {formatDate(s.created_at)}
-              </span>
-              <VoteButton
-                suggestionId={s.id}
-                count={votes?.counts[s.id] ?? 0}
-                hasVoted={votes?.mine.has(s.id) ?? false}
-              />
-            </div>
-          </Link>
-        ))}
+                <div className="flex flex-wrap items-start gap-2">
+                  <CategoryBadge category={s.category} />
+                  <StatusBadge status={s.status} />
+                </div>
+                <h2 className="mt-3 text-lg font-semibold leading-snug text-ink">
+                  <Link
+                    to="/forlag/$id"
+                    params={{ id: s.id }}
+                    className="underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {s.title}
+                  </Link>
+                </h2>
+                <p className="mt-2 line-clamp-2 text-base leading-relaxed text-ink-soft">{s.description}</p>
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4 text-sm text-ink-soft">
+                  <span className="truncate">
+                    {s.author_name ?? "Anonym"} · {formatDate(s.created_at)}
+                  </span>
+                  <VoteButton
+                    suggestionId={s.id}
+                    count={votes?.counts[s.id] ?? 0}
+                    hasVoted={votes?.mine.has(s.id) ?? false}
+                    title={s.title}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </>
   );
