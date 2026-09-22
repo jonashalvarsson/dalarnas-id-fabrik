@@ -84,6 +84,7 @@ function AdminPage() {
           </div>
         </header>
 
+        <main>
         <h1 className="text-3xl font-bold text-ink">
           Följ upp förslagen
         </h1>
