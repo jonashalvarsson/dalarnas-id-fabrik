@@ -62,16 +62,8 @@ function SuggestionDetail() {
 
       <article className="mt-5 rounded-md border border-border border-l-4 border-l-primary bg-card p-6 sm:p-9">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-moss-pale px-2.5 py-1 text-xs font-medium text-moss">
-            {suggestion.category}
-          </span>
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-              STATUS_STYLES[suggestion.status] ?? STATUS_STYLES["Nytt"]
-            }`}
-          >
-            {suggestion.status}
-          </span>
+          <CategoryBadge category={suggestion.category} />
+          <StatusBadge status={suggestion.status} />
         </div>
 
         <h1 className="mt-4 text-3xl font-bold leading-tight text-balance text-ink">
