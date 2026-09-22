@@ -44,6 +44,12 @@
   --color-ink-soft: var(--ink-soft);
   --color-rose: var(--rose);
   --color-rose-pale: var(--rose-pale);
+  --color-sky: var(--sky);
+  --color-sky-pale: var(--sky-pale);
+  --color-amber: var(--amber);
+  --color-amber-pale: var(--amber-pale);
+  --color-ash: var(--ash);
+  --color-ash-pale: var(--ash-pale);
   --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Fraunces", Georgia, serif;
 }
@@ -78,6 +84,12 @@
   --ink-soft: oklch(0.481 0.012 125.9);
   --rose: oklch(0.602 0.103 38.5);
   --rose-pale: oklch(0.934 0.017 44.8);
+  --sky: oklch(0.52 0.08 245);
+  --sky-pale: oklch(0.943 0.015 245);
+  --amber: oklch(0.58 0.09 70);
+  --amber-pale: oklch(0.946 0.02 80);
+  --ash: oklch(0.5 0.005 240);
+  --ash-pale: oklch(0.937 0.004 240);
 }
 
 .dark {
@@ -108,6 +120,12 @@
   --ink: oklch(0.961 0.011 89.7);
   --ink-soft: oklch(0.72 0.012 125.9);
   --rose: oklch(0.68 0.1 38.5);
+  --sky: oklch(0.72 0.07 245);
+  --sky-pale: oklch(0.38 0.015 245);
+  --amber: oklch(0.72 0.08 70);
+  --amber-pale: oklch(0.38 0.015 70);
+  --ash: oklch(0.72 0.005 240);
+  --ash-pale: oklch(0.38 0.004 240);
   --rose-pale: oklch(0.38 0.02 38.5);
 }
 

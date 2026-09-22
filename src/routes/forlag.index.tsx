@@ -81,7 +81,7 @@ function ForlagPage() {
               </span>
               <span
                 className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
-                  STATUS_STYLES[s.status] ?? STATUS_STYLES["Ny"]
+                  STATUS_STYLES[s.status] ?? STATUS_STYLES["Nytt"]
                 }`}
               >
                 {s.status}
