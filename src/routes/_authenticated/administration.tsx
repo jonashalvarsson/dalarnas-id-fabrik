@@ -9,6 +9,8 @@ import { CategoryBadge, StatusBadge } from "@/components/StatusBadge";
 import { useSession } from "@/lib/useSession";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Star } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/administration")({
   head: () => ({
