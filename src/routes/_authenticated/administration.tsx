@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { ensureAdminRole } from "@/lib/admin.functions";
 import { STATUSES, STATUS_STYLES, formatDate, type Suggestion } from "@/lib/suggestions";
 import { useSession } from "@/lib/useSession";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/_authenticated/administration")({
   head: () => ({
@@ -63,7 +65,7 @@ function AdminPage() {
       <div className="mx-auto max-w-4xl px-5 py-8 sm:px-8 sm:py-10">
         <header className="flex flex-wrap items-center justify-between gap-4 pb-8">
           <Link to="/" className="flex items-center gap-3">
-            <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-moss font-serif text-base font-semibold text-primary-foreground">
+            <div className="grid size-12 shrink-0 place-items-center rounded-md bg-primary text-base font-bold text-primary-foreground">
               R
             </div>
             <div className="leading-tight">
@@ -75,13 +77,13 @@ function AdminPage() {
             <Link to="/forlag" className="transition-colors hover:text-moss">
               Alla förslag
             </Link>
-            <button onClick={handleSignOut} className="transition-colors hover:text-moss">
+            <Button onClick={handleSignOut} variant="ghost" size="sm">
               Logga ut
-            </button>
+            </Button>
           </div>
         </header>
 
-        <h1 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
+        <h1 className="text-3xl font-bold text-ink">
           Följ upp förslagen
         </h1>
         <p className="mt-2 text-sm text-ink-soft">
@@ -158,7 +160,7 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
   const dirty = status !== suggestion.status || comment !== (suggestion.admin_comment ?? "");
 
   return (
-    <article className="rounded-2xl bg-white p-5 ring-1 ring-black/5 sm:p-6">
+    <article className="rounded-md border border-border border-l-4 border-l-primary bg-card p-5 sm:p-6">
       <div className="flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-moss-pale px-2.5 py-1 text-xs font-medium text-moss">
           {suggestion.category}
@@ -173,7 +175,7 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
         <span className="text-xs text-ink-soft/80">{formatDate(suggestion.created_at)}</span>
       </div>
 
-      <h2 className="mt-3 font-serif text-lg font-semibold text-ink">
+      <h2 className="mt-3 text-lg font-bold text-ink">
         <Link
           to="/forlag/$id"
           params={{ id: suggestion.id }}
@@ -188,7 +190,7 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
         <div>
           <label
             htmlFor={`status-${suggestion.id}`}
-            className="text-xs font-semibold uppercase tracking-[0.14em] text-moss"
+             className="text-sm font-semibold text-ink"
           >
             Status
           </label>
@@ -196,7 +198,7 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
             id={`status-${suggestion.id}`}
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-black/10 bg-sand/40 px-3.5 py-2.5 text-sm text-ink outline-none transition-colors focus:border-moss focus:bg-white"
+            className="mt-2 min-h-12 w-full rounded-md border border-input bg-card px-4 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ring"
           >
             {STATUSES.map((option) => (
               <option key={option} value={option}>
@@ -208,30 +210,29 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
         <div>
           <label
             htmlFor={`comment-${suggestion.id}`}
-            className="text-xs font-semibold uppercase tracking-[0.14em] text-moss"
+            className="text-sm font-semibold text-ink"
           >
             Kommentar från ansvarig
           </label>
-          <textarea
+          <Textarea
             id={`comment-${suggestion.id}`}
             value={comment}
             rows={3}
             maxLength={1000}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Vad händer med förslaget?"
-            className="mt-1.5 w-full resize-y rounded-xl border border-black/10 bg-sand/40 px-3.5 py-2.5 text-sm text-ink outline-none transition-colors focus:border-moss focus:bg-white"
+            className="mt-2 resize-y"
           />
         </div>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <button
+        <Button
           onClick={() => save.mutate()}
           disabled={!dirty || save.isPending}
-          className="rounded-xl bg-moss px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40"
         >
           {save.isPending ? "Sparar…" : "Spara ändringar"}
-        </button>
+        </Button>
         {saved && <span className="text-sm text-moss">Sparat</span>}
         {save.isError && (
           <span className="text-sm text-rose">Kunde inte spara. Försök igen.</span>

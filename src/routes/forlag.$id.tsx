@@ -59,7 +59,7 @@ function SuggestionDetail() {
         ← Alla förslag
       </Link>
 
-      <article className="mt-5 rounded-2xl bg-white p-6 ring-1 ring-black/5 sm:p-9">
+      <article className="mt-5 rounded-md border border-border border-l-4 border-l-primary bg-card p-6 sm:p-9">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-moss-pale px-2.5 py-1 text-xs font-medium text-moss">
             {suggestion.category}
@@ -73,7 +73,7 @@ function SuggestionDetail() {
           </span>
         </div>
 
-        <h1 className="mt-4 font-serif text-2xl font-semibold leading-tight text-balance text-ink sm:text-3xl">
+        <h1 className="mt-4 text-3xl font-bold leading-tight text-balance text-ink">
           {suggestion.title}
         </h1>
         <p className="mt-2 text-sm text-ink-soft/80">
@@ -87,7 +87,7 @@ function SuggestionDetail() {
             hasVoted={votes?.mine.has(suggestion.id) ?? false}
             size="lg"
           />
-          <span className="text-sm text-ink-soft">
+          <span className="text-base text-ink-soft">
             {(votes?.counts[suggestion.id] ?? 0) === 1 ? "1 person har" : `${votes?.counts[suggestion.id] ?? 0} personer har`} röstat på det här förslaget
           </span>
         </div>
@@ -103,8 +103,8 @@ function SuggestionDetail() {
         </div>
 
         {suggestion.admin_comment && (
-          <div className="mt-7 rounded-xl bg-moss-pale/60 p-5">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-moss">
+          <div className="mt-7 rounded-md border-l-4 border-primary bg-accent p-5">
+            <h2 className="text-sm font-bold text-primary">
               Kommentar från ansvarig
             </h2>
             <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft sm:text-base">
@@ -125,8 +125,8 @@ function SuggestionDetail() {
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-moss">{label}</h2>
-      <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-pretty text-ink-soft sm:text-base">
+      <h2 className="text-lg font-bold text-ink">{label}</h2>
+      <p className="mt-2 whitespace-pre-line text-base leading-relaxed text-pretty text-ink-soft">
         {children}
       </p>
     </section>
@@ -142,7 +142,7 @@ function SuggestionNotFound() {
       >
         ← Alla förslag
       </Link>
-      <div className="mt-6 rounded-2xl bg-white p-10 text-center ring-1 ring-dashed ring-moss/30">
+      <div className="mt-6 rounded-md border border-border bg-card p-10 text-center">
         <p className="font-serif text-lg font-medium text-moss">Förslaget hittades inte</p>
         <p className="mt-2 text-sm text-ink-soft">
           Det kan ha tagits bort. Gå tillbaka och välj ett annat förslag.
