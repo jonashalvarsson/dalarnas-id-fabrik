@@ -348,3 +348,109 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
     </div>
   );
 }
+
+function StatsSection() {
+  const { data: suggestions, isLoading } = useQuery({
+    queryKey: ["suggestions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("suggestions")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (error) throw error;
+      return data as Suggestion[];
+    },
+  });
+
+  const { data: votes } = useVotes();
+
+  const total = suggestions?.length ?? 0;
+  const newCount = suggestions?.filter((s) => s.status === STATUSES[0]).length ?? 0;
+  const doneCount = suggestions?.filter((s) => s.status === "Genomfört").length ?? 0;
+
+  const topFive = suggestions
+    ? [...suggestions]
+        .sort((a, b) => (votes?.counts[b.id] ?? 0) - (votes?.counts[a.id] ?? 0))
+        .slice(0, 5)
+        .filter((s, i, arr) => (votes?.counts[s.id] ?? 0) > 0 || i < 5)
+    : [];
+
+  const cards = [
+    { label: "Förslag totalt", value: total },
+    { label: "Nya förslag", value: newCount },
+    { label: "Genomförda", value: doneCount },
+  ];
+
+  return (
+    <section aria-label="Statistik" className="pb-12">
+      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+        {cards.map((c) => (
+          <div key={c.label} className="rounded-2xl bg-white p-4 text-center ring-1 ring-black/5 sm:p-6">
+            <p className="font-serif text-2xl font-semibold text-moss sm:text-3xl">
+              {isLoading ? "…" : c.value}
+            </p>
+            <p className="mt-1 text-xs text-ink-soft sm:text-sm">{c.label}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 rounded-2xl bg-white p-5 ring-1 ring-black/5 sm:p-7">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="font-serif text-lg font-semibold text-ink sm:text-xl">Mest röstade förslagen</h2>
+          <Link
+            to="/forlag"
+            className="shrink-0 text-sm font-medium text-moss transition-colors hover:text-moss-light"
+          >
+            Alla förslag →
+          </Link>
+        </div>
+
+        {isLoading && (
+          <div className="mt-4 space-y-3">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="h-14 animate-pulse rounded-xl bg-sand/70" />
+            ))}
+          </div>
+        )}
+
+        {!isLoading && total === 0 && (
+          <p className="mt-4 text-sm text-ink-soft">
+            Inga förslag har lämnats ännu – bli den första att lämna ett förslag ovan.
+          </p>
+        )}
+
+        {!isLoading && total > 0 && (
+          <ol className="mt-4 divide-y divide-black/5">
+            {topFive.map((s, i) => (
+              <li key={s.id}>
+                <Link
+                  to="/forlag/$id"
+                  params={{ id: s.id }}
+                  className="group flex items-center gap-3 py-3 transition-colors"
+                >
+                  <span className="grid size-7 shrink-0 place-items-center rounded-full bg-moss-pale font-serif text-xs font-semibold text-moss">
+                    {i + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium text-ink group-hover:text-moss">
+                      {s.title}
+                    </span>
+                    <span className="mt-0.5 block truncate text-xs text-ink-soft/80">
+                      {s.category} · {s.status} · {formatDate(s.created_at)}
+                    </span>
+                  </span>
+                  <VoteButton
+                    suggestionId={s.id}
+                    count={votes?.counts[s.id] ?? 0}
+                    hasVoted={votes?.mine.has(s.id) ?? false}
+                  />
+                </Link>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </section>
+  );
+}
