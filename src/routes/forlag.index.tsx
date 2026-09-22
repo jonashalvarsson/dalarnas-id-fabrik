@@ -11,6 +11,8 @@ import {
 } from "@/lib/suggestions";
 import { useVotes } from "@/lib/votes";
 import { VoteButton } from "@/components/VoteButton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/forlag/")({
   head: () => ({
@@ -70,30 +72,37 @@ function ForlagPage() {
 
   return (
     <>
-      <div className="flex items-end justify-between pb-6">
+      <div className="flex items-end justify-between gap-4 pb-6">
         <div>
-          <h1 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">Alla förslag</h1>
-          <p className="mt-1 text-sm text-ink-soft">Klicka på ett förslag för att läsa mer.</p>
+          <h1 className="text-3xl font-bold text-ink">Alla förslag</h1>
+          <p className="mt-2 text-base text-ink-soft">Här kan du läsa och rösta på medarbetarnas förslag.</p>
         </div>
-        <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-ink-soft ring-1 ring-black/5">
+        <span className="text-sm font-semibold text-ink-soft">
           {filtered ? `${filtered.length} st` : "…"}
         </span>
       </div>
 
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row">
-        <input
+      <div className="mb-8 grid gap-4 border-y border-border py-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="sm:col-span-2 lg:col-span-1">
+        <Label htmlFor="suggestion-search">Sök förslag</Label>
+        <Input
+          id="suggestion-search"
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Sök bland förslag…"
           aria-label="Sök bland förslag"
-          className="w-full rounded-xl bg-white px-4 py-2.5 text-sm text-ink ring-1 ring-black/10 placeholder:text-ink-soft/60 focus:outline-none focus:ring-2 focus:ring-moss sm:flex-1"
+          className="mt-2"
         />
+        </div>
+        <div>
+        <Label htmlFor="category-filter">Kategori</Label>
         <select
+          id="category-filter"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           aria-label="Filtrera på kategori"
-          className="rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-moss"
+          className="mt-2 min-h-12 w-full rounded-md border border-input bg-card px-4 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ring"
         >
           <option value="">Alla kategorier</option>
           {CATEGORIES.map((c) => (
@@ -102,11 +111,15 @@ function ForlagPage() {
             </option>
           ))}
         </select>
+        </div>
+        <div>
+        <Label htmlFor="status-filter">Status</Label>
         <select
+          id="status-filter"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
           aria-label="Filtrera på status"
-          className="rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-moss"
+          className="mt-2 min-h-12 w-full rounded-md border border-input bg-card px-4 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ring"
         >
           <option value="">Alla statusar</option>
           {STATUSES.map((s) => (
@@ -115,22 +128,27 @@ function ForlagPage() {
             </option>
           ))}
         </select>
+        </div>
+        <div>
+        <Label htmlFor="sort-filter">Sortering</Label>
         <select
+          id="sort-filter"
           value={sort}
           onChange={(e) => setSort(e.target.value as "votes" | "date")}
           aria-label="Sortera förslag"
-          className="rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-moss"
+          className="mt-2 min-h-12 w-full rounded-md border border-input bg-card px-4 text-base text-ink focus:outline-none focus:ring-2 focus:ring-ring"
         >
           <option value="votes">Flest röster</option>
           <option value="date">Senaste först</option>
         </select>
+        </div>
       </div>
 
 
-      <div className="grid grid-cols-1 gap-4 pb-12 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="space-y-4 pb-12">
         {isLoading &&
           [0, 1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl bg-white/70 ring-1 ring-black/5" />
+            <div key={i} className="h-48 animate-pulse rounded-md bg-card ring-1 ring-border" />
           ))}
 
         {!isLoading && suggestions?.length === 0 && (
@@ -158,7 +176,7 @@ function ForlagPage() {
             key={s.id}
             to="/forlag/$id"
             params={{ id: s.id }}
-            className="group flex flex-col rounded-2xl bg-white p-5 ring-1 ring-black/5 transition-all hover:-translate-y-0.5 hover:ring-moss/30"
+            className="group block rounded-md border border-border border-l-4 border-l-primary bg-card p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-6"
           >
             <div className="flex items-start justify-between gap-2">
               <span className="rounded-full bg-moss-pale px-2.5 py-1 text-xs font-medium text-moss">
@@ -172,11 +190,11 @@ function ForlagPage() {
                 {s.status}
               </span>
             </div>
-            <h2 className="mt-3 text-base font-medium leading-snug text-ink group-hover:text-moss">
+            <h2 className="mt-3 text-lg font-semibold leading-snug text-ink group-hover:text-primary">
               {s.title}
             </h2>
-            <p className="mt-2 line-clamp-2 text-sm text-ink-soft">{s.description}</p>
-            <div className="mt-4 flex items-center justify-between gap-2 border-t border-black/5 pt-3 text-xs text-ink-soft/80">
+            <p className="mt-2 line-clamp-2 text-base leading-relaxed text-ink-soft">{s.description}</p>
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4 text-sm text-ink-soft">
               <span className="truncate">
                 {s.author_name ?? "Anonym"} · {formatDate(s.created_at)}
               </span>
