@@ -20,7 +20,9 @@ export type Database = {
           category: string
           created_at: string
           description: string
+          expected_benefit: string
           id: string
+          problem: string
           status: string
           title: string
         }
@@ -29,7 +31,9 @@ export type Database = {
           category?: string
           created_at?: string
           description: string
+          expected_benefit?: string
           id?: string
+          problem?: string
           status?: string
           title: string
         }
@@ -38,7 +42,9 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string
+          expected_benefit?: string
           id?: string
+          problem?: string
           status?: string
           title?: string
         }
