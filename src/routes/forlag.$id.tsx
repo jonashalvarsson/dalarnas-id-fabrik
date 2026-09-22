@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { STATUS_STYLES, formatDate, type Suggestion } from "@/lib/suggestions";
+import { useVotes } from "@/lib/votes";
+import { VoteButton } from "@/components/VoteButton";
 
 export const Route = createFileRoute("/forlag/$id")({
   head: () => ({
@@ -26,6 +28,7 @@ export const Route = createFileRoute("/forlag/$id")({
 
 function SuggestionDetail() {
   const { id } = Route.useParams();
+  const { data: votes } = useVotes();
 
   const { data: suggestion, isLoading } = useQuery({
     queryKey: ["suggestion", id],
@@ -76,6 +79,18 @@ function SuggestionDetail() {
         <p className="mt-2 text-sm text-ink-soft/80">
           {suggestion.author_name ?? "Anonym"} · {formatDate(suggestion.created_at)}
         </p>
+
+        <div className="mt-5 flex items-center gap-3">
+          <VoteButton
+            suggestionId={suggestion.id}
+            count={votes?.counts[suggestion.id] ?? 0}
+            hasVoted={votes?.mine.has(suggestion.id) ?? false}
+            size="lg"
+          />
+          <span className="text-sm text-ink-soft">
+            {(votes?.counts[suggestion.id] ?? 0) === 1 ? "1 person har" : `${votes?.counts[suggestion.id] ?? 0} personer har`} röstat på det här förslaget
+          </span>
+        </div>
 
         <div className="mt-7 space-y-7">
           <Section label="Beskrivning">{suggestion.description}</Section>

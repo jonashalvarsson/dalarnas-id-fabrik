@@ -9,6 +9,8 @@ import {
   formatDate,
   type Suggestion,
 } from "@/lib/suggestions";
+import { useVotes } from "@/lib/votes";
+import { VoteButton } from "@/components/VoteButton";
 
 export const Route = createFileRoute("/forlag/")({
   head: () => ({
@@ -44,20 +46,27 @@ function ForlagPage() {
     },
   });
 
+  const { data: votes } = useVotes();
+
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
+  const [sort, setSort] = useState<"votes" | "date">("votes");
 
-  const filtered = suggestions?.filter((s) => {
-    const q = query.trim().toLowerCase();
-    const matchesQuery =
-      q === "" ||
-      s.title.toLowerCase().includes(q) ||
-      s.description.toLowerCase().includes(q);
-    const matchesCategory = category === "" || s.category === category;
-    const matchesStatus = status === "" || s.status === status;
-    return matchesQuery && matchesCategory && matchesStatus;
-  });
+  const filtered = suggestions
+    ?.filter((s) => {
+      const q = query.trim().toLowerCase();
+      const matchesQuery =
+        q === "" ||
+        s.title.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q);
+      const matchesCategory = category === "" || s.category === category;
+      const matchesStatus = status === "" || s.status === status;
+      return matchesQuery && matchesCategory && matchesStatus;
+    })
+    .sort((a, b) =>
+      sort === "votes" ? (votes?.counts[b.id] ?? 0) - (votes?.counts[a.id] ?? 0) : 0,
+    );
 
   return (
     <>
@@ -106,7 +115,17 @@ function ForlagPage() {
             </option>
           ))}
         </select>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value as "votes" | "date")}
+          aria-label="Sortera förslag"
+          className="rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-moss"
+        >
+          <option value="votes">Flest röster</option>
+          <option value="date">Senaste först</option>
+        </select>
       </div>
+
 
       <div className="grid grid-cols-1 gap-4 pb-12 sm:grid-cols-2 lg:grid-cols-3">
         {isLoading &&
@@ -157,9 +176,15 @@ function ForlagPage() {
               {s.title}
             </h2>
             <p className="mt-2 line-clamp-2 text-sm text-ink-soft">{s.description}</p>
-            <div className="mt-4 flex items-center justify-between border-t border-black/5 pt-3 text-xs text-ink-soft/80">
-              <span>{s.author_name ?? "Anonym"}</span>
-              <span>{formatDate(s.created_at)}</span>
+            <div className="mt-4 flex items-center justify-between gap-2 border-t border-black/5 pt-3 text-xs text-ink-soft/80">
+              <span className="truncate">
+                {s.author_name ?? "Anonym"} · {formatDate(s.created_at)}
+              </span>
+              <VoteButton
+                suggestionId={s.id}
+                count={votes?.counts[s.id] ?? 0}
+                hasVoted={votes?.mine.has(s.id) ?? false}
+              />
             </div>
           </Link>
         ))}
