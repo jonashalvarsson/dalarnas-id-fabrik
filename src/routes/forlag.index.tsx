@@ -9,8 +9,28 @@ import {
   formatDate,
   type Suggestion,
 } from "@/lib/suggestions";
-...
-  });
+
+export const Route = createFileRoute("/forlag/")({
+  head: () => ({
+    meta: [
+      { title: "Alla förslag – Förbättringsposten" },
+      {
+        name: "description",
+        content: "Se alla inskickade förbättringsförslag till Region Dalarna med kategori, datum och status.",
+      },
+      { property: "og:title", content: "Alla förslag – Förbättringsposten" },
+      {
+        property: "og:description",
+        content: "Se alla inskickade förbättringsförslag till Region Dalarna med kategori, datum och status.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: ForlagPage,
+});
+
+function ForlagPage() {
   const { data: suggestions, isLoading } = useQuery({
     queryKey: ["suggestions"],
     queryFn: async () => {
