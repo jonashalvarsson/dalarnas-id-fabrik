@@ -28,6 +28,7 @@ export const Route = createFileRoute("/forlag/$id")({
 
 function SuggestionDetail() {
   const { id } = Route.useParams();
+  const { data: votes } = useVotes();
 
   const { data: suggestion, isLoading } = useQuery({
     queryKey: ["suggestion", id],
