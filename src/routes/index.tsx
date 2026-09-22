@@ -373,7 +373,6 @@ function StatsSection() {
     ? [...suggestions]
         .sort((a, b) => (votes?.counts[b.id] ?? 0) - (votes?.counts[a.id] ?? 0))
         .slice(0, 5)
-        .filter((s, i, arr) => (votes?.counts[s.id] ?? 0) > 0 || i < 5)
     : [];
 
   const cards = [
