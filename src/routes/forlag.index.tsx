@@ -9,6 +9,8 @@ import {
   formatDate,
   type Suggestion,
 } from "@/lib/suggestions";
+import { useVotes } from "@/lib/votes";
+import { VoteButton } from "@/components/VoteButton";
 
 export const Route = createFileRoute("/forlag/")({
   head: () => ({
@@ -44,20 +46,27 @@ function ForlagPage() {
     },
   });
 
+  const { data: votes } = useVotes();
+
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
+  const [sort, setSort] = useState<"votes" | "date">("votes");
 
-  const filtered = suggestions?.filter((s) => {
-    const q = query.trim().toLowerCase();
-    const matchesQuery =
-      q === "" ||
-      s.title.toLowerCase().includes(q) ||
-      s.description.toLowerCase().includes(q);
-    const matchesCategory = category === "" || s.category === category;
-    const matchesStatus = status === "" || s.status === status;
-    return matchesQuery && matchesCategory && matchesStatus;
-  });
+  const filtered = suggestions
+    ?.filter((s) => {
+      const q = query.trim().toLowerCase();
+      const matchesQuery =
+        q === "" ||
+        s.title.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q);
+      const matchesCategory = category === "" || s.category === category;
+      const matchesStatus = status === "" || s.status === status;
+      return matchesQuery && matchesCategory && matchesStatus;
+    })
+    .sort((a, b) =>
+      sort === "votes" ? (votes?.counts[b.id] ?? 0) - (votes?.counts[a.id] ?? 0) : 0,
+    );
 
   return (
     <>
