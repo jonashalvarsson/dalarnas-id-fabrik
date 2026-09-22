@@ -74,7 +74,7 @@ function AuthPage() {
           </div>
         </Link>
 
-        <div className="mt-8 rounded-md border border-border bg-card p-6 sm:p-8">
+        <main className="mt-8 rounded-md border border-border bg-card p-6 sm:p-8">
           <h1 className="text-2xl font-bold text-ink">
             {mode === "login" ? "Logga in som ansvarig" : "Skapa konto som ansvarig"}
           </h1>

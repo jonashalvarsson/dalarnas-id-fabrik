@@ -122,6 +122,7 @@ function AdminPage() {
             )}
           </div>
         )}
+        </main>
       </div>
     </div>
   );
