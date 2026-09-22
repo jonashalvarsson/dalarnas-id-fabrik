@@ -172,11 +172,25 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
     },
   });
 
-  const dirty = status !== suggestion.status || comment !== (suggestion.admin_comment ?? "");
+  const dirty =
+    status !== suggestion.status ||
+    comment !== (suggestion.admin_comment ?? "") ||
+    prioritized !== (suggestion.is_prioritized ?? false) ||
+    responsible !== (suggestion.responsible_person ?? "");
 
   return (
-    <article className="rounded-md border border-border border-l-4 border-l-primary bg-card p-5 sm:p-6">
+    <article
+      className={`rounded-md border border-border border-l-4 bg-card p-5 sm:p-6 ${
+        suggestion.is_prioritized ? "border-l-amber ring-1 ring-amber/40" : "border-l-primary"
+      }`}
+    >
       <div className="flex flex-wrap items-center gap-2">
+        {suggestion.is_prioritized && (
+          <span className="inline-flex items-center gap-1 rounded-md bg-amber-pale px-2.5 py-1 text-xs font-bold text-amber">
+            <Star aria-hidden="true" className="size-3.5" />
+            Prioriterat
+          </span>
+        )}
         <CategoryBadge category={suggestion.category} />
         <StatusBadge status={suggestion.status} />
         <span className="text-xs text-ink-soft">{formatDate(suggestion.created_at)}</span>
