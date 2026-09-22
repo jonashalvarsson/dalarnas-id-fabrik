@@ -1,41 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
-type Suggestion = {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  status: string;
-  author_name: string | null;
-  created_at: string;
-  problem: string;
-  expected_benefit: string;
-};
-
-const CATEGORIES = [
-  "Administration",
-  "IT",
-  "Arbetsmiljö",
-  "Kommunikation",
-  "Ekonomi",
-  "Övrigt",
-] as const;
-
-const STATUS_STYLES: Record<string, string> = {
-  Ny: "bg-sand-dark text-ink-soft",
-  Pågår: "bg-rose-pale text-rose",
-  Klar: "bg-moss-pale text-moss",
-};
+import { CATEGORIES } from "@/lib/suggestions";
 
 const inputClasses =
   "mt-2 w-full rounded-xl bg-sand/50 border border-black/10 px-4 py-3 text-sm text-ink placeholder:text-ink-soft/60 focus:outline-none focus:ring-2 focus:ring-moss/30 focus:border-moss/40";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("sv-SE", { day: "numeric", month: "short" });
-}
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -62,19 +32,6 @@ export const Route = createFileRoute("/")({
 function Index() {
   const queryClient = useQueryClient();
 
-  const { data: suggestions, isLoading } = useQuery({
-    queryKey: ["suggestions"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("suggestions")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(50);
-      if (error) throw error;
-      return data as Suggestion[];
-    },
-  });
-
   return (
     <div className="min-h-screen bg-sand font-sans text-ink antialiased">
       <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
@@ -89,90 +46,29 @@ function Index() {
             </div>
           </div>
           <nav className="hidden items-center gap-7 text-sm text-ink-soft sm:flex">
-            <a href="#forlagen" className="transition-colors hover:text-moss">
-              Tidigare förslag
-            </a>
+            <Link to="/forlag" className="transition-colors hover:text-moss">
+              Alla förslag
+            </Link>
           </nav>
         </header>
 
-        <div className="grid grid-cols-1 gap-8 pb-12 lg:grid-cols-12 lg:gap-10">
-          <section className="lg:col-span-5">
-            <SuggestionForm onSubmitted={() => queryClient.invalidateQueries({ queryKey: ["suggestions"] })} />
-          </section>
+        <div className="mx-auto max-w-2xl pb-12">
+          <SuggestionForm onSubmitted={() => queryClient.invalidateQueries({ queryKey: ["suggestions"] })} />
 
-          <section id="forlagen" className="lg:col-span-7">
-            <div className="flex items-end justify-between pb-5">
-              <div>
-                <h2 className="font-serif text-xl font-semibold text-ink sm:text-2xl">
-                  Tidigare förslag
-                </h2>
-                <p className="mt-1 text-sm text-ink-soft">Så ser andras bidrag ut i dag.</p>
-              </div>
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-ink-soft ring-1 ring-black/5">
-                {suggestions ? `${suggestions.length} st` : "…"}
-              </span>
+          <Link
+            to="/forlag"
+            className="group mt-6 flex items-center justify-between rounded-2xl bg-white p-5 ring-1 ring-black/5 transition-all hover:-translate-y-0.5 hover:ring-moss/30"
+          >
+            <div>
+              <p className="text-base font-medium text-ink group-hover:text-moss">Se alla förslag</p>
+              <p className="mt-1 text-sm text-ink-soft">
+                Bläddra bland alla inskickade förslag som kort – klicka för att läsa mer.
+              </p>
             </div>
-
-            <div className="space-y-3">
-              {isLoading &&
-                [0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="h-32 animate-pulse rounded-2xl bg-white/70 ring-1 ring-black/5"
-                  />
-                ))}
-
-              {!isLoading && suggestions?.length === 0 && (
-                <div className="rounded-2xl bg-white p-8 text-center ring-1 ring-dashed ring-moss/30">
-                  <p className="font-serif text-base font-medium text-moss">
-                    Inga förslag ännu
-                  </p>
-                  <p className="mt-1 text-sm text-ink-soft">
-                    Bli den första att lämna ett förslag – formuläret finns till vänster.
-                  </p>
-                </div>
-              )}
-
-              {suggestions?.map((s) => (
-                <article
-                  key={s.id}
-                  className="rounded-2xl bg-white p-5 ring-1 ring-black/5 transition-colors hover:ring-moss/25"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-base font-medium leading-snug text-ink">{s.title}</h3>
-                    <span
-                      className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
-                        STATUS_STYLES[s.status] ?? STATUS_STYLES["Ny"]
-                      }`}
-                    >
-                      {s.status}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-pretty text-ink-soft">{s.description}</p>
-                  {s.problem && (
-                    <p className="mt-2 text-sm text-ink-soft">
-                      <span className="font-medium text-ink">Problem: </span>
-                      {s.problem}
-                    </p>
-                  )}
-                  {s.expected_benefit && (
-                    <p className="mt-1 text-sm text-ink-soft">
-                      <span className="font-medium text-ink">Förväntad nytta: </span>
-                      {s.expected_benefit}
-                    </p>
-                  )}
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="rounded-full bg-moss-pale px-2.5 py-1 text-xs font-medium text-moss">
-                      {s.category}
-                    </span>
-                    <span className="text-xs text-ink-soft/80">
-                      {s.author_name ?? "Anonym"} · {formatDate(s.created_at)}
-                    </span>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
+            <span aria-hidden className="text-xl text-moss transition-transform group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
         </div>
 
         <footer className="flex flex-col items-start justify-between gap-3 border-t border-black/5 pt-6 text-xs text-ink-soft/80 sm:flex-row sm:items-center">
@@ -282,16 +178,24 @@ function SuggestionForm({ onSubmitted }: { onSubmitted: () => void }) {
           <div className="rounded-2xl bg-moss-pale/40 p-6 text-center ring-1 ring-dashed ring-moss/30">
             <p className="font-serif text-lg font-medium text-moss">Tack för ditt förslag!</p>
             <p className="mt-2 text-sm text-ink-soft">
-              Det har registrerats och visas nu i listan under ”Tidigare förslag”.
+              Det har registrerats och visas nu bland alla förslag.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={resetForm}
-            className="mt-5 w-full rounded-xl border border-moss/30 bg-transparent py-3 text-sm font-medium text-moss transition-colors hover:bg-moss-pale/50 focus:outline-none focus:ring-2 focus:ring-moss/40"
-          >
-            Lämna ett till förslag
-          </button>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <Link
+              to="/forlag"
+              className="flex-1 rounded-xl bg-moss py-3 text-center text-sm font-medium text-primary-foreground ring-1 ring-moss/60 transition-colors hover:bg-moss-light focus:outline-none focus:ring-2 focus:ring-moss/50"
+            >
+              Visa alla förslag
+            </Link>
+            <button
+              type="button"
+              onClick={resetForm}
+              className="flex-1 rounded-xl border border-moss/30 bg-transparent py-3 text-sm font-medium text-moss transition-colors hover:bg-moss-pale/50 focus:outline-none focus:ring-2 focus:ring-moss/40"
+            >
+              Lämna ett till förslag
+            </button>
+          </div>
         </div>
       ) : (
         <>

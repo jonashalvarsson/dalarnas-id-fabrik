@@ -10,33 +10,60 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ForlagRouteImport } from './routes/forlag'
+import { Route as ForlagIndexRouteImport } from './routes/forlag.index'
+import { Route as ForlagIdRouteImport } from './routes/forlag.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForlagRoute = ForlagRouteImport.update({
+  id: '/forlag',
+  path: '/forlag',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForlagIndexRoute = ForlagIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ForlagRoute,
+} as any)
+const ForlagIdRoute = ForlagIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ForlagRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/forlag': typeof ForlagRouteWithChildren
+  '/forlag/$id': typeof ForlagIdRoute
+  '/forlag/': typeof ForlagIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/forlag/$id': typeof ForlagIdRoute
+  '/forlag': typeof ForlagIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/forlag': typeof ForlagRouteWithChildren
+  '/forlag/$id': typeof ForlagIdRoute
+  '/forlag/': typeof ForlagIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/forlag' | '/forlag/$id' | '/forlag/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/forlag/$id' | '/forlag'
+  id: '__root__' | '/' | '/forlag' | '/forlag/$id' | '/forlag/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ForlagRoute: typeof ForlagRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +75,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forlag': {
+      id: '/forlag'
+      path: '/forlag'
+      fullPath: '/forlag'
+      preLoaderRoute: typeof ForlagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forlag/': {
+      id: '/forlag/'
+      path: '/'
+      fullPath: '/forlag/'
+      preLoaderRoute: typeof ForlagIndexRouteImport
+      parentRoute: typeof ForlagRoute
+    }
+    '/forlag/$id': {
+      id: '/forlag/$id'
+      path: '/$id'
+      fullPath: '/forlag/$id'
+      preLoaderRoute: typeof ForlagIdRouteImport
+      parentRoute: typeof ForlagRoute
+    }
   }
 }
 
+interface ForlagRouteChildren {
+  ForlagIdRoute: typeof ForlagIdRoute
+  ForlagIndexRoute: typeof ForlagIndexRoute
+}
+
+const ForlagRouteChildren: ForlagRouteChildren = {
+  ForlagIdRoute: ForlagIdRoute,
+  ForlagIndexRoute: ForlagIndexRoute,
+}
+
+const ForlagRouteWithChildren =
+  ForlagRoute._addFileChildren(ForlagRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ForlagRoute: ForlagRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
