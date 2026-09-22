@@ -47,6 +47,7 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("suggestions")
         .select("*")
+        .order("is_prioritized", { ascending: false })
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as Suggestion[];
