@@ -9,6 +9,8 @@ import { CategoryBadge, StatusBadge } from "@/components/StatusBadge";
 import { useSession } from "@/lib/useSession";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Star } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/administration")({
   head: () => ({
@@ -47,6 +49,7 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("suggestions")
         .select("*")
+        .order("is_prioritized", { ascending: false })
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as Suggestion[];
@@ -133,11 +136,20 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
   const [status, setStatus] = useState(suggestion.status);
   const [comment, setComment] = useState(suggestion.admin_comment ?? "");
   const [saved, setSaved] = useState(false);
+  const [prioritized, setPrioritized] = useState(suggestion.is_prioritized ?? false);
+  const [responsible, setResponsible] = useState(suggestion.responsible_person ?? "");
 
   useEffect(() => {
     setStatus(suggestion.status);
     setComment(suggestion.admin_comment ?? "");
-  }, [suggestion.status, suggestion.admin_comment]);
+    setPrioritized(suggestion.is_prioritized ?? false);
+    setResponsible(suggestion.responsible_person ?? "");
+  }, [
+    suggestion.status,
+    suggestion.admin_comment,
+    suggestion.is_prioritized,
+    suggestion.responsible_person,
+  ]);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -146,6 +158,8 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
         .update({
           status,
           admin_comment: comment,
+          is_prioritized: prioritized,
+          responsible_person: responsible,
           status_updated_at: new Date().toISOString(),
         })
         .eq("id", suggestion.id);
@@ -160,11 +174,25 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
     },
   });
 
-  const dirty = status !== suggestion.status || comment !== (suggestion.admin_comment ?? "");
+  const dirty =
+    status !== suggestion.status ||
+    comment !== (suggestion.admin_comment ?? "") ||
+    prioritized !== (suggestion.is_prioritized ?? false) ||
+    responsible !== (suggestion.responsible_person ?? "");
 
   return (
-    <article className="rounded-md border border-border border-l-4 border-l-primary bg-card p-5 sm:p-6">
+    <article
+      className={`rounded-md border border-border border-l-4 bg-card p-5 sm:p-6 ${
+        suggestion.is_prioritized ? "border-l-amber ring-1 ring-amber/40" : "border-l-primary"
+      }`}
+    >
       <div className="flex flex-wrap items-center gap-2">
+        {suggestion.is_prioritized && (
+          <span className="inline-flex items-center gap-1 rounded-md bg-amber-pale px-2.5 py-1 text-xs font-bold text-amber">
+            <Star aria-hidden="true" className="size-3.5" />
+            Prioriterat
+          </span>
+        )}
         <CategoryBadge category={suggestion.category} />
         <StatusBadge status={suggestion.status} />
         <span className="text-xs text-ink-soft">{formatDate(suggestion.created_at)}</span>
@@ -218,6 +246,34 @@ function AdminCard({ suggestion }: { suggestion: Suggestion }) {
             placeholder="Vad händer med förslaget?"
             className="mt-2 resize-y"
           />
+        </div>
+        <div>
+          <label htmlFor={`responsible-${suggestion.id}`} className="text-sm font-semibold text-ink">
+            Ansvarig för nästa steg
+          </label>
+          <Input
+            id={`responsible-${suggestion.id}`}
+            value={responsible}
+            maxLength={120}
+            onChange={(e) => setResponsible(e.target.value)}
+            placeholder="Namn eller funktion"
+            className="mt-2"
+          />
+        </div>
+        <div className="flex items-start sm:items-end">
+          <label
+            htmlFor={`prio-${suggestion.id}`}
+            className="flex min-h-12 cursor-pointer items-center gap-3 text-sm font-semibold text-ink"
+          >
+            <input
+              id={`prio-${suggestion.id}`}
+              type="checkbox"
+              checked={prioritized}
+              onChange={(e) => setPrioritized(e.target.checked)}
+              className="size-5 rounded border-input accent-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+            Markera som prioriterat
+          </label>
         </div>
       </div>
 

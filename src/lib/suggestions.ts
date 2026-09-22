@@ -10,6 +10,8 @@ export type Suggestion = {
   expected_benefit: string;
   admin_comment: string;
   status_updated_at: string | null;
+  is_prioritized: boolean;
+  responsible_person: string;
 };
 
 export const CATEGORIES = [

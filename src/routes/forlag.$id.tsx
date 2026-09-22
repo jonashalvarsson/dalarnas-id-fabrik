@@ -5,6 +5,7 @@ import { formatDate, type Suggestion } from "@/lib/suggestions";
 import { CategoryBadge, StatusBadge } from "@/components/StatusBadge";
 import { useVotes } from "@/lib/votes";
 import { VoteButton } from "@/components/VoteButton";
+import { Star } from "lucide-react";
 
 export const Route = createFileRoute("/forlag/$id")({
   head: () => ({
@@ -62,6 +63,12 @@ function SuggestionDetail() {
 
       <article className="mt-5 rounded-md border border-border border-l-4 border-l-primary bg-card p-6 sm:p-9">
         <div className="flex flex-wrap items-center gap-2">
+          {suggestion.is_prioritized && (
+            <span className="inline-flex items-center gap-1 rounded-md bg-amber-pale px-2.5 py-1 text-xs font-bold text-amber">
+              <Star aria-hidden="true" className="size-3.5" />
+              Prioriterat
+            </span>
+          )}
           <CategoryBadge category={suggestion.category} />
           <StatusBadge status={suggestion.status} />
         </div>
@@ -95,14 +102,22 @@ function SuggestionDetail() {
           )}
         </div>
 
-        {suggestion.admin_comment && (
+        {(suggestion.admin_comment || suggestion.responsible_person) && (
           <div className="mt-7 rounded-md border-l-4 border-primary bg-accent p-5">
             <h2 className="text-sm font-bold text-primary">
               Kommentar från ansvarig
             </h2>
-            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft sm:text-base">
-              {suggestion.admin_comment}
-            </p>
+            {suggestion.admin_comment && (
+              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft sm:text-base">
+                {suggestion.admin_comment}
+              </p>
+            )}
+            {suggestion.responsible_person && (
+              <p className="mt-3 text-sm text-ink-soft">
+                <span className="font-semibold text-ink">Ansvarig för nästa steg:</span>{" "}
+                {suggestion.responsible_person}
+              </p>
+            )}
             {suggestion.status_updated_at && (
               <p className="mt-3 text-xs text-ink-soft/80">
                 Uppdaterad {formatDate(suggestion.status_updated_at)}

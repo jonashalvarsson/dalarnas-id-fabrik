@@ -52,7 +52,9 @@ export type Database = {
           description: string
           expected_benefit: string
           id: string
+          is_prioritized: boolean
           problem: string
+          responsible_person: string
           status: string
           status_updated_at: string | null
           title: string
@@ -65,7 +67,9 @@ export type Database = {
           description: string
           expected_benefit?: string
           id?: string
+          is_prioritized?: boolean
           problem?: string
+          responsible_person?: string
           status?: string
           status_updated_at?: string | null
           title: string
@@ -78,7 +82,9 @@ export type Database = {
           description?: string
           expected_benefit?: string
           id?: string
+          is_prioritized?: boolean
           problem?: string
+          responsible_person?: string
           status?: string
           status_updated_at?: string | null
           title?: string
