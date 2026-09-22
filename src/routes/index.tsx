@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, STATUSES, formatDate, type Suggestion } from "@/lib/suggestions";
 import { useVotes } from "@/lib/votes";
 import { VoteButton } from "@/components/VoteButton";
+import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
