@@ -157,9 +157,9 @@ function AuthPage() {
           >
             {mode === "login" ? "Jag har inget konto än" : "Jag har redan ett konto"}
           </Button>
-        </div>
+        </main>
 
-        <Link to="/" className="mt-6 text-sm text-ink-soft transition-colors hover:text-moss">
+        <Link to="/" className="mt-6 flex min-h-11 items-center text-sm text-ink-soft hover:text-primary">
           ← Till startsidan
         </Link>
       </div>
